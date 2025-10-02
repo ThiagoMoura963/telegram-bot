@@ -1,2 +1,13 @@
+# Ambiente Virtual
+venv/
+
+# Arquivo de Segredos
 .env
-__pycache__/
+
+# Arquivos de Cache e compilados do Python
+__pycache__/  # <-- É esta linha que faz o trabalho!
+*.pyc        # Ignora também arquivos .pyc fora de uma pasta __pycache__
+
+# Pastas de configuração de Editores de Código
+.vscode/
+.idea/
