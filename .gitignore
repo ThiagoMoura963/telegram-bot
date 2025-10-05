@@ -11,3 +11,7 @@ __pycache__/  # <-- É esta linha que faz o trabalho!
 # Pastas de configuração de Editores de Código
 .vscode/
 .idea/
+
+# Arquivos de cache e compilados do Python
+__pycache__/
+*.pyc
