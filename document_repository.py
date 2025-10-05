@@ -13,7 +13,7 @@ class DocumentRespository:
         )
 
     def create(self, file_name):
-        sql = "INSERT INTO app.documents (file_name) VALUES (%s) RETURNING id"
+        sql = 'INSERT INTO app.documents (file_name) VALUES (%s) RETURNING id'
         document_id = None
 
         try:
