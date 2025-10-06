@@ -5,13 +5,18 @@ venv/
 .env
 
 # Arquivos de Cache e compilados do Python
-__pycache__/  # <-- É esta linha que faz o trabalho!
-*.pyc        # Ignora também arquivos .pyc fora de uma pasta __pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
 # Pastas de configuração de Editores de Código
 .vscode/
 .idea/
 
-# Arquivos de cache e compilados do Python
-__pycache__/
-*.pyc
+# Dados e arquivos grandes (ex: PDFs, modelos, etc)
+books/
+
+# Arquivos de sistema (Windows, macOS)
+.DS_Store
+Thumbs.db

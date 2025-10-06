@@ -21,8 +21,15 @@ class DocumentRespository:
                 cur.execute(sql, (file_name,))
                 document_id = cur.fetchone()[0]
                 print(f"Documento '{file_name}' inserido com ID: {document_id}")
+<<<<<<< HEAD
 
         except Error as e:
             print(f'Erro ao inserir documento: {e}')
 
         return document_id
+=======
+        except Error as e:
+            print(f'Erro ao inserir documento: {e}')
+
+        return document_id
+>>>>>>> recuperado

@@ -1,8 +1,21 @@
 import telebot
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+from config import api_keys
+from call_gemini import send_message_to_gemini
+
+bot = telebot.TeleBot(api_keys['TELEGRAM_API_KEY'])
+=======
+>>>>>>> recuperado
 from config import TELEGRAM_API_KEY
 from call_gemini import send_message_to_gemini
 
 bot = telebot.TeleBot(TELEGRAM_API_KEY)
+<<<<<<< HEAD
+=======
+>>>>>>> 9876ff1 (Integrando Postgres com o Python através do pyscopg2)
+>>>>>>> recuperado
 
 @bot.message_handler(commands=['start', 'help'])
 def start(msg: telebot.types.Message):

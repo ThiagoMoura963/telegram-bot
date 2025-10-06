@@ -1,4 +1,16 @@
 from dotenv import load_dotenv
+import os 
+
+load_dotenv()
+
+REQUIRED_KEYS = ['GEMINI_API_KEY', 'TELEGRAM_API_KEY']
+api_keys = {key: os.getenv(key) for key in REQUIRED_KEYS}
+missing_keys = [key for key, value in api_keys.items() if value is None]
+
+if missing_keys:
+    raise ValueError(f'A(s) seguinte(s) chave(s) API não foi/foram encontrada(s) no .env {', '.join(missing_keys)}')
+
+from dotenv import load_dotenv
 import os
 
 load_dotenv()
@@ -6,6 +18,7 @@ load_dotenv()
 REQUIRED_KEYS = [
     'GEMINI_API_KEY', 
     'TELEGRAM_API_KEY', 
+    'HF_API_KEY',
     'POSTGRES_USERNAME',
     'POSTGRES_PASSWORD',
     'POSTGRES_HOST',
@@ -22,6 +35,7 @@ if missing_keys:
 
 GEMINI_API_KEY = _config_data['GEMINI_API_KEY']
 TELEGRAM_API_KEY = _config_data['TELEGRAM_API_KEY']
+HF_API_KEY = _config_data['HF_API_KEY']
 POSTGRES_USERNAME = _config_data['POSTGRES_USERNAME']
 POSTGRES_PASSWORD = _config_data['POSTGRES_PASSWORD']
 POSTGRES_HOST = _config_data['POSTGRES_HOST']
