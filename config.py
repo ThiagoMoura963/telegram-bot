@@ -18,6 +18,7 @@ load_dotenv()
 REQUIRED_KEYS = [
     'GEMINI_API_KEY', 
     'TELEGRAM_API_KEY', 
+    'HF_API_KEY',
     'POSTGRES_USERNAME',
     'POSTGRES_PASSWORD',
     'POSTGRES_HOST',
@@ -34,6 +35,7 @@ if missing_keys:
 
 GEMINI_API_KEY = _config_data['GEMINI_API_KEY']
 TELEGRAM_API_KEY = _config_data['TELEGRAM_API_KEY']
+HF_API_KEY = _config_data['HF_API_KEY']
 POSTGRES_USERNAME = _config_data['POSTGRES_USERNAME']
 POSTGRES_PASSWORD = _config_data['POSTGRES_PASSWORD']
 POSTGRES_HOST = _config_data['POSTGRES_HOST']

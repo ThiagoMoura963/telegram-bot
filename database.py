@@ -1,5 +1,7 @@
 import psycopg2
 from psycopg2 import Error
+from psycopg2.extensions import connection, cursor as Cursor
+from pgvector.psycopg2 import register_vector
 
 class PostgresManager:
     def __init__(self, username, password, host, port, database):
@@ -10,13 +12,15 @@ class PostgresManager:
             "port": port,
             "database": database
         }
-        self.cursor = None
-        self.conn = None
+        self.conn: connection | None = None
+        self.cursor: Cursor | None = None
         
-    def __enter__(self):
+    def __enter__(self) -> Cursor:
         try:
-            # print('DESEMPACOTAMENTO:', **self.conn_params)
             self.conn = psycopg2.connect(**self.conn_params)
+
+            register_vector(self.conn)
+
             self.cursor = self.conn.cursor()
             print('Conectado no banco postgres com sucesso.')
             return self.cursor

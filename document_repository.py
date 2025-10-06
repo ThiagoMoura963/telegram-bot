@@ -13,7 +13,7 @@ class DocumentRespository:
         )
 
     def create(self, file_name):
-        sql = "INSERT INTO app.documents (file_name) VALUES (%s) RETURNING id"
+        sql = 'INSERT INTO app.documents (file_name) VALUES (%s) RETURNING id'
         document_id = None
 
         try:
@@ -21,7 +21,6 @@ class DocumentRespository:
                 cur.execute(sql, (file_name,))
                 document_id = cur.fetchone()[0]
                 print(f"Documento '{file_name}' inserido com ID: {document_id}")
-
         except Error as e:
             print(f'Erro ao inserir documento: {e}')
 
