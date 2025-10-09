@@ -25,3 +25,19 @@ class DocumentChunksRepository:
                 
         except Error as e:
             print(f'Erro ao inserir chunks em lote: {e}')
+
+    def find_similar_chunks(self, query_embedding, limit):
+        sql = 'SELECT content ' \
+            'FROM app.document_chunks ' \
+            'ORDER BY content_vector <=> %s ' \
+            'LIMIT %s'
+
+        try:
+            with self.db_manager as cur:
+                cur.execute(sql, (query_embedding, limit))
+                results = cur.fetchall()
+                
+                return [row[0] for row in results]
+        except Error as e:
+            print(f'Erro ao buscar chunks similares: {e}')
+            return []
