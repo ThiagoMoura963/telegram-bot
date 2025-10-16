@@ -1,9 +1,10 @@
 from sentence_transformers import SentenceTransformer
 import torch
+import numpy as np
 from config import HF_API_KEY
 
-class EmbeddingGenerator:
-    def __init__(self, model_name: str = 'sentence-transformers/multi-qa-MiniLM-L6-cos-v1'):
+class EmbeddingGenerator:                 
+    def __init__(self, model_name: str = 'sentence-transformers/paraphrase-multilingual-mpnet-base-v2'):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f'Dispositivo detectado: {self.device}')
         print(f'Carregando o modelo de embedding "{model_name}" no dispositivo: {self.device}')
@@ -23,4 +24,8 @@ class EmbeddingGenerator:
             show_progress_bar=True
         )
 
-        return embeddings.cpu().tolist()
+        embeddings = embeddings.cpu().numpy()
+
+        embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
+
+        return embeddings.tolist()
