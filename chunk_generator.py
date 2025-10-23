@@ -11,7 +11,7 @@ class ChunksGenerator:
             is_separator_regex=False
         )
 
-    def process_pdf(self, path):
+    def extract_chunks(self, path):
         try:
             full_text = ''
 
