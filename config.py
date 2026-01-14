@@ -23,7 +23,8 @@ REQUIRED_KEYS = [
     'POSTGRES_PASSWORD',
     'POSTGRES_HOST',
     'POSTGRES_PORT',
-    'POSTGRES_DATABASE'
+    'POSTGRES_DATABASE',
+    'AI_PROVIDER'
 ]
 
 _config_data = {key: os.getenv(key) for key in REQUIRED_KEYS}
@@ -41,3 +42,4 @@ POSTGRES_PASSWORD = _config_data['POSTGRES_PASSWORD']
 POSTGRES_HOST = _config_data['POSTGRES_HOST']
 POSTGRES_PORT = _config_data['POSTGRES_PORT']
 POSTGRES_DATABASE = _config_data['POSTGRES_DATABASE']
+AI_PROVIDER_TYPE = _config_data['AI_PROVIDER']

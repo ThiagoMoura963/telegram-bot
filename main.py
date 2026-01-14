@@ -1,73 +1,45 @@
-from document_repository import DocumentRespository
-from document_chunks_repository import DocumentChunksRepository
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from pathlib import Path
-from embedding_generator import EmbeddingGenerator
-from chunk_generator import ChunksGenerator
-import telegram_bot
-import sys
 import argparse
+import sys
+import telegram_view
+from services.ingestion_service import IngestionService
 
-def process_file(file_path: str):
-    print(f'Iniciando processamento do arquivo {file_path}')
-
-    file_path = Path(file_path)
-
-    if not file_path.is_file():
-        print(f'Arquivo {file_path} não encontrado')
-        sys.exit(1)
-
-    file_name = file_path.name
-
-    chunks_generator = ChunksGenerator()
-    chunks_document = chunks_generator.extract_chunks(file_path)
-
-    if chunks_document:
-        chunks_text = [doc.page_content for doc in chunks_document]
-        print(f'Arquivo dividido em {len(chunks_text)} chunks. Gerando embeddings...')
-
-        embedding_generator = EmbeddingGenerator()
-        embeddings = embedding_generator.generate_embeddings(chunks_text)
-        print('Embeddings gerados. Salvando no banco de dados...')
-        
-        doc_repository = DocumentRespository()
-        chunk_repo = DocumentChunksRepository()
-
-        document_id = doc_repository.create(file_name)
-
-        if not document_id:
-            print('Falha ao criar o registro do documento.')
-            sys.exit(1)   
-
-        insert_data = []
-
-        for i, (doc, embedding) in enumerate(zip(chunks_document, embeddings)):
-            insert_data.append((doc.page_content, embedding, i))
-
-        chunk_repo.bulk_insert(document_id, insert_data)
-
-        print(f'\nDocumento "{file_name}" processado com sucesso.')
-        print(f'{len(chunks_document)} chunks e seus vetores foram armazenados no banco de dados.')
-    else:
-        print(f'Não foi possível extrair os chunks do documento: {file_name}')
-        sys.exit(1)
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
-        description='Aplicativo do Bot e Processador de Documentos.'
+        description='Bot de IA (Gemini) e Processador de Documentos RAG.'
     )
     
     parser.add_argument(
         '--process-pdf',
         type=str,
-        help='Caminho completo para o arquivo PDF que será processado e salvo no banco de dados.',
-        metavar='FILE_PATH'
+        help='Caminho para o arquivo PDF que será processado e salvo no banco.',
+        metavar='CAMINHO_ARQUIVO'
     )
 
     args = parser.parse_args()
 
     if args.process_pdf:
-        process_file(args.process_pdf)
+        try:
+            print(f'Iniciando processamento do documento: {args.process_pdf}')
+            
+            service = IngestionService()
+            total_chunks = service.process_pdf(args.process_pdf)
+            
+            print(f'✅ Sucesso! {total_chunks} chunks e vetores armazenados no banco.')
+            
+        except Exception as e:
+            print(f'Erro crítico no processamento: {e}')
+            sys.exit(1)
+            
     else:
-        print('Iniciando bot do Telegram...')
-        telegram_bot.run()
+        try:
+            print('Iniciando Bot do Telegram...')
+            telegram_view.run()
+        except KeyboardInterrupt:
+            print('\nBot encerrado pelo usuário.')
+            sys.exit(0)
+        except Exception as e:
+            print(f'Falha ao iniciar o Bot: {e}')
+            sys.exit(1)
+
+if __name__ == '__main__':
+    main()
