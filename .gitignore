@@ -3,6 +3,7 @@ venv/
 
 # Arquivo de Segredos
 .env
+.env.development
 
 # Arquivos de Cache e compilados do Python
 __pycache__/

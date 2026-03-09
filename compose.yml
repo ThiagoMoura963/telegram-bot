@@ -1,0 +1,15 @@
+services:
+  database:
+    image: postgres:16.0-alpine3.18
+    container_name: bd-tcc
+    restart: unless-stopped
+    env_file:
+      - .env.development
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  pgdata:
+    driver: local
