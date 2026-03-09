@@ -1,22 +1,9 @@
 import telebot
-from telebot import types
+from telebot import types 
 from config import TELEGRAM_API_KEY
 from controller.bot_controller import BotController
 
-if TELEGRAM_API_KEY is None:
-    raise ValueError("A variável TELEGRAM_API_KEY não foi definida no .env")
 
-bot = telebot.TeleBot(TELEGRAM_API_KEY)
-
-controller = BotController()
-
-import telebot
-from telebot import types  # Importação direta para evitar erro de 'private import'
-from config import TELEGRAM_API_KEY
-from controller.bot_controller import BotController
-
-# Inicialização dos componentes
-# O Pylance exige que TELEGRAM_API_KEY seja str (não None)
 if not TELEGRAM_API_KEY:
     raise ValueError("TELEGRAM_API_KEY não encontrada no arquivo .env")
 

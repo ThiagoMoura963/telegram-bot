@@ -1,5 +1,5 @@
 import config
-from database import PostgresManager
+from ..database import PostgresManager
 from psycopg2 import Error
 from psycopg2.extras import execute_values
 from typing import Any
