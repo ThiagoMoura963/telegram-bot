@@ -24,8 +24,11 @@ class GeminiProvider(AIProvider):
     def get_embedding(self, text: str) -> list[float]:
         try:
             result = self.client.models.embed_content(
-                model='text-embedding-004',
-                contents=text
+                model='gemini-embedding-2-preview',
+                contents=text,
+                config=types.EmbedContentConfig(
+                    output_dimensionality=1536
+                )
             )
             if not result.embeddings or not result.embeddings[0].values:
                 raise ValueError("Falha ao gerar embedding.")
@@ -37,8 +40,11 @@ class GeminiProvider(AIProvider):
     def get_embeddings(self, texts: list[str]) -> list[list[float]]:
         try:                
             result = self.client.models.embed_content(
-                model='text-embedding-004',
-                contents=list(texts)
+                model='gemini-embedding-2-preview',
+                contents=list(texts),
+                config=types.EmbedContentConfig(
+                    output_dimensionality=1536
+                )
             )
 
             if not result.embeddings:

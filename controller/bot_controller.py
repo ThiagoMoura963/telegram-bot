@@ -40,6 +40,7 @@ class BotController:
         
             return self.ai.send_message(final_prompt, system_instruction)
         except (ValueError, RuntimeError) as e:
+            print("Erro:", e)
             return f'Ocorreu um erro no processamento {str(e)}'
         except Exception:
             return 'Erro interno no servidor. Por favor, tente novamente mais tarde'

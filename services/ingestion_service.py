@@ -27,8 +27,8 @@ class IngestionService:
             raise RuntimeError("Falha ao criar registro do documento no banco.")
 
         insert_data = [
-            (content, vector, i) 
-            for i, (content, vector) in enumerate(zip(chunks, embeddings))
+            (content, vector)
+            for content, vector in zip(chunks, embeddings)
         ]
 
         self.chunk_repo.bulk_insert(doc_id, insert_data)

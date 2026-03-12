@@ -1,8 +1,9 @@
+#type: ignore
+
 import telebot
 from telebot import types 
 from config import TELEGRAM_API_KEY
 from controller.bot_controller import BotController
-
 
 if not TELEGRAM_API_KEY:
     raise ValueError("TELEGRAM_API_KEY não encontrada no arquivo .env")

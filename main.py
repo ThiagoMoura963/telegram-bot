@@ -1,6 +1,8 @@
+# type: ignore
+
 import argparse
 import sys
-import telegram_view
+from view import telegram_view
 from services.ingestion_service import IngestionService
 
 def main():
@@ -24,7 +26,7 @@ def main():
             service = IngestionService()
             total_chunks = service.process_pdf(args.process_pdf)
             
-            print(f'✅ Sucesso! {total_chunks} chunks e vetores armazenados no banco.')
+            print(f'Sucesso! {total_chunks} chunks e vetores armazenados no banco.')
             
         except Exception as e:
             print(f'Erro crítico no processamento: {e}')
