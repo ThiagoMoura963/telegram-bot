@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>Login | Teste</title>
+</head>
+<body>
+    <div class="login-box">
+        <div class="login-header">
+            <header>Login</header>
+        </div>
+        <div class="input-box">
+            <label for="email">Email</label>
+            <input id="email" type="text" class="input-field" placeholder="Insira o email" autocomplete="off" required>
+        </div>
+        <div class="input-box">
+            <label for="password">Senha</label>
+            <div class="password-container">
+                <input id="password" type="password" class="input-field" placeholder="Insira a senha" autocomplete="off" required>
+                <i class="fa-solid fa-eye" id="togglePassword"></i> <!--Centralizar no css-->
+            </div>
+        </div>
+        <div class="forgot">
+            <section>
+                <a href="#">Esqueci a senha</a>
+            </section>
+        </div>
+        <div class="input-submit">
+            <button class="submit-btn" id="submit">Entrar</button>
+            <label for="submit">Entrar</label>
+        </div>
+    </div>
+
+    <script src="../JS/login.js"></script>
+</body>
+</html>
