@@ -1,9 +1,0 @@
-services:
-  database:
-    image: pgvector/pgvector:pg16
-    container_name: bd-tcc
-    restart: unless-stopped
-    env_file:
-      - .env.development
-    ports:
-      - "5432:5432"
