@@ -132,3 +132,68 @@ input, textarea {
     background-color: #636363;
 
 }
+
+.agents-grid:empty::before {
+    content: "Nenhum agente cadastrado. Clique no botão abaixo para começar.";
+    color: #888;
+    grid-column: 1 / -1; 
+    text-align: center;
+    padding: 50px;
+}
+
+.agents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px 40px;
+    width: 100%;
+    margin-top: 100px;
+}
+
+.agent-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    transition: transform 0.2s;
+}
+
+.agent-card:hover {
+    transform: translateY(-4px); 
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-desc {
+    text-align: left;
+    line-height: 1.5;
+    color: #555;
+    font-size: 0.95rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.config-card-btn {
+    margin-top: auto;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.link-BotFather {
+    color: blue;
+}
