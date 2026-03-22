@@ -43,8 +43,6 @@ function addAgent(){
 
     modal.showModal();
 
-    
-    
     document.getElementById('saveAdd').onclick = () => {
         let agent = {
             id: agents.length + 1, 

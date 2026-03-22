@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS/verifyCode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>Verificar código</title>
+</head>
+<body>
+    <div class="code-box">
+        <div class="code-header">
+            <header>Inserir código</header>
+        </div>
+
+        <p class="code-instruction">Insira o código de 6 dígitos enviado para o seu e-mail.</p>
+
+        <div class="code-input-group">
+        <input type="text" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*" id="digit1" autocomplete="off">
+        <input type="text" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*" id="digit2" autocomplete="off">
+        <input type="text" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*" id="digit3" autocomplete="off">
+        <input type="text" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*" id="digit4" autocomplete="off">
+        <input type="text" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*" id="digit5" autocomplete="off">
+        <input type="text" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*" id="digit6" autocomplete="off">
+        </div>
+
+        <div class="input-submit">
+            <button class="submit-btn" id="submit">Verificar</button>
+            <label for="submit">Verificar</label>
+        </div>
+        <div class="cancel">
+            <section>
+                <a href="login.html">Cancelar</a>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

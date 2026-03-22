@@ -42,7 +42,7 @@
     text-align: right; 
 }
 
-.agent-btn {
+.exit-btn {
     text-decoration: none;
     color: #000;
     font-weight: bold;
@@ -53,12 +53,7 @@
     transition: 0.3s;
 }
 
-.agent-btn:hover {
-    background-color: #000;
-    color: #ffffff;
-}
-
-.active {
+.exit-btn:hover {
     background-color: #000;
     color: #ffffff;
 }
