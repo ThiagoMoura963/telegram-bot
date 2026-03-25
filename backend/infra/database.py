@@ -2,6 +2,7 @@
 
 import psycopg2
 import os
+from psycopg2.extensions import cursor
 
 class PostgresManager:
     def __init__(self):
@@ -16,7 +17,7 @@ class PostgresManager:
         self.conn = None
         self.cursor = None
 
-    def __enter__(self):
+    def __enter__(self) -> cursor:
         try:
             self.conn = psycopg2.connect(**self.conn_params)
             self.cursor = self.conn.cursor()
