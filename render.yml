@@ -7,7 +7,4 @@ services:
     buildFilter:
       ignoredPaths:
         - frontend/**
-      includedPaths:
-        - backend/**
-        - index.py
-        - requirements.txt
+        
