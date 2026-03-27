@@ -10,31 +10,31 @@ pool_de_vazamento_global = []
 
 @router.get("/flood")
 async def trigger_flood():
-    num_requisicoes = 20
+    num_requisicoes = 20 # Volte para um número maior para ver o efeito
     
     def query_vazando(id_teste):
         try:
-            # 1. Instanciamos a classe
             manager = PostgresManager()
-            # 2. Abrimos a conexão manualmente (sem 'with')
+            # CHAMADA MANUAL: Sem o 'with', o Python não sabe quando fechar
             cursor = manager.__enter__() 
+            
             cursor.execute("SELECT 1")
             
-            # 3. Guardamos na lista GLOBAL para impedir o Garbage Collector
+            # Guardamos na lista GLOBAL. 
+            # Sem o 'with', o __exit__ nunca é disparado.
+            # Sem o Garbage Collector (devido à lista global), o __del__ nunca é disparado.
             pool_de_vazamento_global.append(manager) 
             return True
         except Exception as e:
-            print(f"Erro ao vazar conexão {id_teste}: {e}")
+            print(f"Erro: {e}")
             return False
 
-    # Executamos em paralelo para ganhar velocidade
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_requisicoes) as executor:
         list(executor.map(query_vazando, range(num_requisicoes)))
     
     return {
-        "status": "Inundação concluída com sucesso!", 
-        "total_acumulado_na_ram": len(pool_de_vazamento_global),
-        "acao_necessaria": "Verifique o Neon/Docker agora. O número deve ter subido!"
+        "status": "Inundação concluída!", 
+        "total_na_ram": len(pool_de_vazamento_global)
     }
 
 @router.get("/limpar-vazamento")
