@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get('/')
 def home():
-    return { "message": "Hello World!" }
+    return { "message": "Hello World" }
 
 app.include_router(telegram_router)
 app.include_router(bot_router)
