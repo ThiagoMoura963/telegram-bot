@@ -36,7 +36,6 @@ def get_status():
                 'version': database_version_value,
                 'max_connections': int(database_max_connections_value),
                 'opened_connections': int(database_opened_connections_value),
-                'db_name': database_name
             }
         }
     }

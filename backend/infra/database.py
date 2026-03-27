@@ -35,10 +35,9 @@ class PostgresManager:
                 else:
                     self.conn.commit()
         finally:
-            ...
-            # if self.cursor:
-            #     self.cursor.close()
-            # if self.conn:
-            #     self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
 
         return False
