@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from backend.controllers.telegram_controller import router as telegram_router
 from backend.controllers.bot_controller import router as bot_router
 from backend.controllers.status_controller import router as status_router
+# Adicione este:
+from backend.controllers.test_controller import router as test_router 
 
 app = FastAPI()
 
@@ -12,3 +14,5 @@ def home():
 app.include_router(telegram_router)
 app.include_router(bot_router)
 app.include_router(status_router)
+# E este:
+app.include_router(test_router)
