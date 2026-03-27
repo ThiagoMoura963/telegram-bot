@@ -1,0 +1,6 @@
+backend/
+venv/
+.env
+render.yaml
+requirements.txt
+index.py
