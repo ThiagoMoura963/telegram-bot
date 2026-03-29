@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+
 from backend.services.bot_setup_service import BotSetupService
 
 router = APIRouter(prefix='/api/v1/bot', tags=['Bot Manager'])
+
 
 @router.post('/activate')
 def activate_bot(token: str, request: Request):
@@ -14,12 +16,9 @@ def activate_bot(token: str, request: Request):
 
     if not sucess:
         raise HTTPException(status_code=400, detail=message)
-    
-    return {
-        'status': 'success',
-        'message': message,
-        'url': webhook_url
-    }
+
+    return {'status': 'success', 'message': message, 'url': webhook_url}
+
 
 @router.get('/info')
 def get_bot_info(token: str):
@@ -28,12 +27,11 @@ def get_bot_info(token: str):
     info = bot_setup_service.get_telegram_info(token)
 
     if not info.get('ok'):
-        raise HTTPException(status_code=400, detail='Failed to retrieve bot information.')
-    
-    return {
-        'status': 'success',
-        'info': info.get('result')
-    }
+        raise HTTPException(
+            status_code=400, detail='Failed to retrieve bot information.'
+        )
+
+    return {'status': 'success', 'info': info.get('result')}
 
 
 @router.delete('/deactivate')
@@ -44,8 +42,5 @@ async def desactivate_bot(token: str):
 
     if not success:
         raise HTTPException(status_code=400, detail=message)
-    
-    return {
-        'status': 'success',
-        'message': message
-    }
+
+    return {'status': 'success', 'message': message}

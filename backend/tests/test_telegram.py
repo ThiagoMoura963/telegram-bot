@@ -1,4 +1,5 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
 
 def test_post_telegram(client):
     payload = {
@@ -6,19 +7,17 @@ def test_post_telegram(client):
         'message': {
             'message_id': 1,
             'date': 1711041600,
-            'chat': {
-                'id': 999, 
-                'type': 'private'
-            },
-            'text': 'Hi, how are you?'
-        }
+            'chat': {'id': 999, 'type': 'private'},
+            'text': 'Hi, how are you?',
+        },
     }
 
     telegram_target = 'telebot.TeleBot.send_message'
     service_target = 'backend.services.chat_service.ChatService.get_answer'
-    with patch(telegram_target) as mock_send_message, \
-        patch(service_target) as mock_service:
-
+    with (
+        patch(telegram_target) as mock_send_message,
+        patch(service_target) as mock_service,
+    ):
         mock_service.return_value = 'Im fine'
 
         response = client.post('/api/v1/telegram/webhook', json=payload)

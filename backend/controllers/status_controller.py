@@ -1,11 +1,13 @@
-#type: ignore
+# type: ignore
 
-from fastapi import APIRouter, Request
-from backend.infra.database import PostgresManager
 from datetime import datetime
-import os
+
+from fastapi import APIRouter
+
+from backend.infra.database import PostgresManager
 
 router = APIRouter(prefix='/api/v1/status', tags=['Status'])
+
 
 @router.get('')
 def get_status():
@@ -23,8 +25,7 @@ def get_status():
 
         database_name = postgres_manager.conn.info.dbname
         cursor.execute(
-            'SELECT count(*) FROM pg_stat_activity WHERE datname = %s',
-            (database_name,)
+            'SELECT count(*) FROM pg_stat_activity WHERE datname = %s', (database_name,)
         )
         database_opened_connections_result = cursor.fetchone()
         database_opened_connections_value = database_opened_connections_result[0]
@@ -37,5 +38,5 @@ def get_status():
                 'max_connections': int(database_max_connections_value),
                 'opened_connections': int(database_opened_connections_value),
             }
-        }
+        },
     }
