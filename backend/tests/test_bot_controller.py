@@ -1,5 +1,4 @@
-from unittest.mock import patch, MagicMock
-from backend.services.bot_setup_service import BotSetupService
+from unittest.mock import patch
 
 
 def test_activate_bot(client):
@@ -9,7 +8,7 @@ def test_activate_bot(client):
         mock_setup.return_value = (True, 'Webhook set successfully')
 
         test_token = 'my-token'
-        
+
         response = client.post(f'/api/v1/bot/activate?token={test_token}')
 
         assert response.status_code == 200
@@ -30,15 +29,15 @@ def test_get_bot_info(client):
         'ok': True,
         'result': {
             'url': 'http://testserver/api/v1/telegram/webhook',
-            'pending_update_count': 0
-        }
+            'pending_update_count': 0,
+        },
     }
 
     target = 'backend.controllers.bot_controller.BotSetupService.get_telegram_info'
 
     with patch(target) as mock_get_info:
         mock_get_info.return_value = mock_telegram_response
-    
+
         response = client.get(f'/api/v1/bot/info?token={test_token}')
 
         assert response.status_code == 200

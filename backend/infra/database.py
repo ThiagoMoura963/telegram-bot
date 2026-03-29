@@ -1,17 +1,19 @@
 # type: ignore
 
-import psycopg2
 import os
+
+import psycopg2
 from psycopg2.extensions import cursor
+
 
 class PostgresManager:
     def __init__(self):
         self.conn_params = {
-            "host": os.getenv('POSTGRES_HOST'),
-            "port": os.getenv('POSTGRES_PORT'),
-            "database": os.getenv('POSTGRES_DB'),
-            "user": os.getenv('POSTGRES_USER'),
-            "password": os.getenv('POSTGRES_PASSWORD')
+            'host': os.getenv('POSTGRES_HOST'),
+            'port': os.getenv('POSTGRES_PORT'),
+            'database': os.getenv('POSTGRES_DB'),
+            'user': os.getenv('POSTGRES_USER'),
+            'password': os.getenv('POSTGRES_PASSWORD'),
         }
 
         self.conn = None
@@ -25,7 +27,7 @@ class PostgresManager:
             return self.cursor
         except Exception as e:
             print(f'[DATABASE ERROR] Falha ao conectar ou criar cursor: {e}')
-            raise RuntimeError(f'Erro crítico de banco de dados: {str(e)}')
+            raise RuntimeError(f'Erro crítico de banco de dados: {str(e)}') from e
 
     def __exit__(self, exc_type, exc, tb):
         try:
