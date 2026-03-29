@@ -1,17 +1,18 @@
 """create documents table
 
 Revision ID: 02efdd7ddf94
-Revises: 
+Revises:
 Create Date: 2026-03-29 18:53:15.182083
 
 """
+
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 from pgvector.sqlalchemy import Vector
+from sqlalchemy.dialects import postgresql
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '02efdd7ddf94'
@@ -24,54 +25,52 @@ def upgrade() -> None:
     """Upgrade schema."""
 
     # extensões necessárias
-    op.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
-    op.execute("CREATE EXTENSION IF NOT EXISTS vector")
+    op.execute('CREATE EXTENSION IF NOT EXISTS pgcrypto')
+    op.execute('CREATE EXTENSION IF NOT EXISTS vector')
 
     # schema
-    op.execute("CREATE SCHEMA IF NOT EXISTS app")
+    op.execute('CREATE SCHEMA IF NOT EXISTS app')
 
     # tabela documents
     op.create_table(
-        "documents",
+        'documents',
         sa.Column(
-            "id",
+            'id',
             postgresql.UUID(as_uuid=True),
             primary_key=True,
-            server_default=sa.text("gen_random_uuid()")
+            server_default=sa.text('gen_random_uuid()'),
         ),
-        sa.Column("file_name", sa.Text(), nullable=False),
+        sa.Column('file_name', sa.Text(), nullable=False),
         sa.Column(
-            "created_at",
+            'created_at',
             sa.TIMESTAMP(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False
+            server_default=sa.text('now()'),
+            nullable=False,
         ),
-        schema="app"
+        schema='app',
     )
 
     # tabela document_chunks
     op.create_table(
-        "document_chunks",
+        'document_chunks',
         sa.Column(
-            "id",
+            'id',
             postgresql.UUID(as_uuid=True),
             primary_key=True,
-            server_default=sa.text("gen_random_uuid()"),
+            server_default=sa.text('gen_random_uuid()'),
         ),
         sa.Column(
-            "document_id",
+            'document_id',
             postgresql.UUID(as_uuid=True),
-            sa.ForeignKey("app.documents.id"),
-            nullable=False
+            sa.ForeignKey('app.documents.id'),
+            nullable=False,
         ),
-        sa.Column("content", sa.String(), nullable=False),
-        sa.Column("content_vector", Vector(1536), nullable=False),
+        sa.Column('content', sa.String(), nullable=False),
+        sa.Column('content_vector', Vector(1536), nullable=False),
         sa.Column(
-            "created_at",
-            sa.TIMESTAMP(timezone=True),
-            server_default=sa.text("now()")
+            'created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()')
         ),
-        schema="app"
+        schema='app',
     )
 
     # índice HNSW do pgvector
@@ -83,11 +82,9 @@ def upgrade() -> None:
     """)
 
 
-
-
 def downgrade() -> None:
     """Downgrade schema."""
-    op.execute("DROP INDEX IF EXISTS app.document_chunks_content_vector_hnsw_idx")
+    op.execute('DROP INDEX IF EXISTS app.document_chunks_content_vector_hnsw_idx')
 
-    op.drop_table("document_chunks", schema="app")
-    op.drop_table("documents", schema="app")
+    op.drop_table('document_chunks', schema='app')
+    op.drop_table('documents', schema='app')
