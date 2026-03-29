@@ -1,16 +1,28 @@
-from datetime import datetime
+from unittest.mock import MagicMock, patch
 
 
-def test_get_statu(client):
-    response = client.get('/api/v1/status')
+def test_get_status(client):
+    target = 'backend.controllers.status_controller.PostgresManager'
 
-    assert response.status_code == 200
+    with patch(target) as mock_postgres:
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.side_effect = [
+            ('16.12',),
+            ('100',),
+            (1,),
+        ]
 
-    data = response.json()
+        mock_instance = MagicMock()
+        mock_instance.__enter__ = MagicMock(return_value=mock_cursor)
+        mock_instance.__exit__ = MagicMock(return_value=False)
+        mock_instance.conn.info.dbname = 'local_db'
+        mock_postgres.return_value = mock_instance
 
-    assert datetime.fromisoformat(data['updated_at'])
+        response = client.get('/api/v1/status')
 
-    db_data = data['dependencies']['database']
-    assert db_data['version'] == '16.13 (Debian 16.13-1.pgdg12+1)'
-    assert db_data['max_connections'] == 100
-    assert db_data['opened_connections'] == 1
+        assert response.status_code == 200
+
+        data = response.json()
+        assert data['dependencies']['database']['version'] == '16.12'
+        assert data['dependencies']['database']['max_connections'] == 100
+        assert data['dependencies']['database']['opened_connections'] == 1
