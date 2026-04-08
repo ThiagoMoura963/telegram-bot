@@ -2,26 +2,22 @@ class ChatService:
     def __init__(self, provider):
         self.provider = provider
 
-    def get_answer(self, message: str, system_instruction: str) -> str:
+    def get_answer(self, message, system_instruction):
         try:
-            response = self.provider.generate_text(
-                prompt=self._build_prompt(message),
-                system_instruction=system_instruction,
-            )
-
-            if not response or not isinstance(response, str):
-                raise ValueError('Resposta inválida do provider')
-
-            response = response.strip()
-            if not response:
-                raise ValueError('Resposta vazia do provider')
-
-            return response
+            return self.provider.generate_text(message, system_instruction)
         except Exception as e:
-            print(f'MENSAGEM DO ERRO: {str(e)}')
-            raise RuntimeError(f'Falha na IA: {str(e)}') from e
+            raise RuntimeError(f'ChatService falhou ao gerar resposta: {e}') from e
 
-    def _build_prompt(self, message: str) -> str:
-        if not message or not message.strip():
-            raise ValueError('Mensagem não pode ser vazia')
-        return f'Pergunta:\n{message}'
+    def get_query_vector(self, text):
+        try:
+            return self.provider.generate_embedding(text)
+        except Exception as e:
+            raise RuntimeError(f'ChatService falhou ao vetorizar consulta: {e}') from e
+
+    def get_document_vectors(self, texts):
+        try:
+            return self.provider.generate_embeddings(texts)
+        except Exception as e:
+            raise RuntimeError(
+                f'ChatService falhou ao vetorizar documentos: {e}'
+            ) from e
