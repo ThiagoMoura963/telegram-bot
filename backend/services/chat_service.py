@@ -6,16 +6,18 @@ class ChatService:
         try:
             return self.provider.generate_text(message, system_instruction)
         except Exception as e:
-            raise RuntimeError(f'ChatService falhou ao gerar resposta: {e}')
+            raise RuntimeError(f'ChatService falhou ao gerar resposta: {e}') from e
 
     def get_query_vector(self, text):
         try:
             return self.provider.generate_embedding(text)
         except Exception as e:
-            raise RuntimeError(f'ChatService falhou ao vetorizar consulta: {e}')
+            raise RuntimeError(f'ChatService falhou ao vetorizar consulta: {e}') from e
 
     def get_document_vectors(self, texts):
         try:
             return self.provider.generate_embeddings(texts)
         except Exception as e:
-            raise RuntimeError(f'ChatService falhou ao vetorizar documentos: {e}')
+            raise RuntimeError(
+                f'ChatService falhou ao vetorizar documentos: {e}'
+            ) from e

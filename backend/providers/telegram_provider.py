@@ -4,10 +4,12 @@ import os
 import telebot
 from dotenv import load_dotenv
 from telebot import types
-from backend.services.chat_service import ChatService
+
 from backend.infra.repositories.chunks_repository import ChunksRepository
+from backend.services.chat_service import ChatService
 
 load_dotenv('.env.development')
+
 
 class TelegramProvider:
     def __init__(self):
@@ -30,12 +32,13 @@ class TelegramProvider:
 
         if candidate_chunks:
             context = '\n\n'.join(
-                f"[Documento: {chunk['source']}]\n{chunk['content']}"
+                f'[Documento: {chunk["source"]}]\n{chunk["content"]}'
                 for chunk in candidate_chunks
             )
-            
+
             final_prompt = f"""
-            Instrução: Use estritamente o contexto abaixo para responder à pergunta do usuário.
+            Instrução: Use estritamente o contexto abaixo para responder 
+            à pergunta do usuário.
             Se a resposta não estiver no contexto, diga que não sabe.
 
             Contexto:
@@ -45,7 +48,7 @@ class TelegramProvider:
             {user_message}
             """
         else:
-            final_prompt = user_message  
+            final_prompt = user_message
 
         answer = chat_service.get_answer(
             message=final_prompt,

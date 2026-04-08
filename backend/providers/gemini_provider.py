@@ -1,8 +1,10 @@
 import os
+
 from dotenv import load_dotenv
 from google.genai import Client, types
 
 load_dotenv('.env.development')
+
 
 class GeminiProvider:
     def __init__(self):
@@ -23,41 +25,39 @@ class GeminiProvider:
 
             return response.text
         except Exception as e:
-            raise RuntimeError(f'Falha na comunicação com o Gemini: {e}')
+            raise RuntimeError(f'Falha na comunicação com o Gemini: {e}') from e
 
-        
     def generate_embedding(self, text):
         try:
             response = self.client.models.embed_content(
                 model='gemini-embedding-2-preview',
                 contents=text,
                 config=types.EmbedContentConfig(
-                    output_dimensionality=1536,
-                    task_type='RETRIEVAL_QUERY'
-                )
+                    output_dimensionality=1536, task_type='RETRIEVAL_QUERY'
+                ),
             )
-    
+
             if not response.embeddings or not response.embeddings[0].values:
                 raise ValueError('Não foi possível gerar o vetor para esta consulta.')
-            
+
             return response.embeddings[0].values
         except Exception as e:
-            raise RuntimeError(f'Falha ao gerar o vetor da consulta: {e}')
-        
+            raise RuntimeError(f'Falha ao gerar o vetor da consulta: {e}') from e
+
     def generate_embeddings(self, texts):
         try:
             response = self.client.models.embed_content(
                 model='gemini-embedding-2-preview',
                 contents=texts,
                 config=types.EmbedContentConfig(
-                    output_dimensionality=1536,
-                    task_type='RETRIEVAL_DOCUMENT'
-                )
+                    output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'
+                ),
             )
 
             if not response.embeddings:
-                raise ValueError('Nenhum vetor foi retornado para o lote de documentos.')
-            
+                msg = 'Nenhum vetor foi retornado para o lote de documentos.'
+                raise ValueError(msg)
+
             return [emb.values for emb in response.embeddings]
         except Exception as e:
-            raise RuntimeError(f'Falha ao gerar os vetores dos documentos: {e}')
+            raise RuntimeError(f'Falha ao gerar os vetores: {e}') from e
