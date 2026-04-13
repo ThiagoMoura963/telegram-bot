@@ -70,8 +70,12 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata, 
-                          include_schemas=True, version_table_schema='app')
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            include_schemas=True,
+            version_table_schema='app',
+        )
 
         with context.begin_transaction():
             context.run_migrations()

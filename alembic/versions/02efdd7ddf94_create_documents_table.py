@@ -81,8 +81,9 @@ def upgrade() -> None:
         WITH (m='16', ef_construction='64')
     """)
 
+
 #
-#def downgrade() -> None:
+# def downgrade() -> None:
 #    """Downgrade schema."""
 #    op.execute('DROP INDEX IF EXISTS app.document_chunks_content_vector_hnsw_idx')
 #

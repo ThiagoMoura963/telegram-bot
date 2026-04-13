@@ -5,6 +5,7 @@ Revises: 02efdd7ddf94
 Create Date: 2026-04-05 20:54:05.816884
 
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa
@@ -29,19 +30,13 @@ def upgrade() -> None:
         sa.Column('hashed_password', sa.String(), nullable=False),
         sa.Column('is_active', sa.Boolean(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
-        schema='app'
+        schema='app',
     )
     op.create_index(
-        op.f('ix_app_users_email'), 
-        'users', ['email'], 
-        unique=True, 
-        schema='app'
+        op.f('ix_app_users_email'), 'users', ['email'], unique=True, schema='app'
     )
     op.create_index(
-        op.f('ix_app_users_id'), 
-        'users', ['id'], 
-        unique=False, 
-        schema='app'
+        op.f('ix_app_users_id'), 'users', ['id'], unique=False, schema='app'
     )
     op.create_table(
         'agents',
@@ -50,15 +45,15 @@ def upgrade() -> None:
         sa.Column('description', sa.String(), nullable=False),
         sa.Column('instruction', sa.String(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['user_id'], ['app.users.id'], ),
+        sa.ForeignKeyConstraint(
+            ['user_id'],
+            ['app.users.id'],
+        ),
         sa.PrimaryKeyConstraint('id'),
-        schema='app'
+        schema='app',
     )
     op.create_index(
-        op.f('ix_app_agents_id'), 
-        'agents', ['id'], 
-        unique=False, 
-        schema='app'
+        op.f('ix_app_agents_id'), 'agents', ['id'], unique=False, schema='app'
     )
     # ### end Alembic commands ###
 

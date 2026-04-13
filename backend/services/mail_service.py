@@ -6,17 +6,18 @@ from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 load_dotenv()
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = os.getenv("MAIL_USERNAME", "temp@example.com"),
-    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "temp_password"),
-    MAIL_FROM = os.getenv("MAIL_FROM", "temp@example.com"),
-    MAIL_PORT = int(os.getenv("MAIL_PORT", 587)),
-    MAIL_SERVER = os.getenv("MAIL_SERVER","smtp.gmail.com"),
-    MAIL_FROM_NAME = os.getenv("MAIL_FROM_NAME", "Bot Manager"),
-    MAIL_STARTTLS = True,
-    MAIL_SSL_TLS = False,
-    USE_CREDENTIALS = True,
-    VALIDATE_CERTS = True
+    MAIL_USERNAME=os.getenv('MAIL_USERNAME', 'temp@example.com'),
+    MAIL_PASSWORD=os.getenv('MAIL_PASSWORD', 'temp_password'),
+    MAIL_FROM=os.getenv('MAIL_FROM', 'temp@example.com'),
+    MAIL_PORT=int(os.getenv('MAIL_PORT', 587)),
+    MAIL_SERVER=os.getenv('MAIL_SERVER', 'smtp.gmail.com'),
+    MAIL_FROM_NAME=os.getenv('MAIL_FROM_NAME', 'Bot Manager'),
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True,
 )
+
 
 class MailService:
     @staticmethod
@@ -34,10 +35,10 @@ class MailService:
         """
 
         message = MessageSchema(
-            subject="Recuperação de Senha - Bot Manager",
+            subject='Recuperação de Senha - Bot Manager',
             recipients=[email_to],
             body=html,
-            subtype=MessageType.html
+            subtype=MessageType.html,
         )
 
         fm = FastMail(conf)
