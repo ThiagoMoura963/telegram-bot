@@ -15,17 +15,19 @@ class RedisManager:
     @property
     def client(self) -> redis.Redis:
         if self._client is None:
-            try:
-                self._client = redis.Redis(
-                    host=self.host,
-                    port=self.port,
-                    db=self.db,
-                    decode_responses=True
+            
+            self._client = redis.Redis(
+                host=self.host or "localhost",
+                port=self.port or 6379,
+                db=self.db or 0,
+                decode_responses=True
                 )
+            
+            try:
                 self._client.ping()
-            except Exception as e:
-                print(f'[REDIS ERROR] Falha ao conectar ao Redis: {e}')
-                raise RuntimeError(f'Erro crítico de cache: {str(e)}') from e
+            except:
+                print("[REDIS ERROR] Redis não detectado na inicialização.")
+            
         return self._client
 
 redis_manager = RedisManager()
