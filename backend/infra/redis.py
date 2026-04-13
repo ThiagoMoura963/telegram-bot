@@ -26,7 +26,7 @@ class RedisManager:
             
             try:
                 self._client.ping()
-            except:
+            except Exception:
                 print("[REDIS ERROR] Redis não detectado na inicialização.")
             
         return self._client
