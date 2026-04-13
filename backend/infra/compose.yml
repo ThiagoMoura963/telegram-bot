@@ -7,3 +7,10 @@ services:
       - ../../.env.development
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-tcc
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
