@@ -58,8 +58,7 @@ async def forgot_password(
     return {
         'status': 'success',
         'message': (
-            'Se o e-mail estiver cadastrado, um código de '
-            '6 dígitos foi enviado.'
+            'Se o e-mail estiver cadastrado, um código de 6 dígitos foi enviado.'
         ),
     }
 
