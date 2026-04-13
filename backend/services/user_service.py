@@ -1,6 +1,7 @@
-from backend.infra.database import PostgresManager
 from backend.core.security import Security
+from backend.infra.database import PostgresManager
 from backend.schemas.user import UserCreate
+
 
 class UserService:
     def create_user(self, user_in: UserCreate):

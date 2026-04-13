@@ -1,7 +1,9 @@
 import secrets
+
+from backend.core.security import Security
 from backend.infra.redis import redis_manager
 from backend.services.user_service import UserService
-from backend.core.security import Security
+
 
 class AuthService:
     def __init__(self):

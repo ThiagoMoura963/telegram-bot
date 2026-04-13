@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 
+
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr 
 

@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
+from backend.controllers.auth_controller import router as auth_router
 from backend.controllers.bot_controller import router as bot_router
 from backend.controllers.document_controller import router as document_router
 from backend.controllers.status_controller import router as status_router
 from backend.controllers.telegram_controller import router as telegram_router
-from backend.controllers.auth_controller import router as auth_router
 
 app = FastAPI()
 

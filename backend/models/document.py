@@ -1,9 +1,11 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, Text
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import Column, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from pgvector.sqlalchemy import Vector
+
 from backend.schemas.base import Base
+
 
 class Document(Base):
     __tablename__ = "documents"

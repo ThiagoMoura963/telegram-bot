@@ -1,13 +1,9 @@
 import os
 from logging.config import fileConfig
 
+from backend.Schemas.base import Base
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
-
-from backend.Schemas.base import Base
-from backend.models.user import User, Agent
-from backend.models.user import User, Agent
-from backend.models.document import Document, DocumentChunk
 
 from alembic import context
 
