@@ -25,7 +25,8 @@ class MailService:
         <html>
             <body>
                 <p>Olá,</p>
-                <p>Você solicitou a recuperação de senha para o seu Telegram Bot Manager.</p>
+                <p>Você solicitou a recuperação de senha para o seu "
+                "Telegram Bot Manager.</p>
                 <p>Seu código de verificação é: <strong>{code}</strong></p>
                 <p>Este código expira em 10 minutos.</p>
             </body>

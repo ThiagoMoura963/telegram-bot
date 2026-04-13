@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -33,7 +35,7 @@ async def register(user_in: UserCreate):
 
 @router.post('/login')
 async def login(
-    form_data: OAuth2PasswordRequestForm = Depends()
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
     result = auth_service.login(form_data.username, form_data.password)
     
