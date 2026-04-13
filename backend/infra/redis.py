@@ -7,8 +7,8 @@ load_dotenv()
 
 class RedisManager:
     def __init__(self):
-        self.host = os.getenv('REDIS_HOST')
-        self.port = os.getenv('REDIS_PORT')
+        self.host = os.getenv('REDIS_HOST', 'localhost')
+        self.port = os.getenv('REDIS_PORT', 6379)
         self.db = int(os.getenv('REDIS_DB', 0))
         self._client: Optional[redis.Redis] = None
 
