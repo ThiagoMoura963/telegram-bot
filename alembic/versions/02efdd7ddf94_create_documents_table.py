@@ -82,9 +82,10 @@ def upgrade() -> None:
     """)
 
 
-def downgrade() -> None:
-    """Downgrade schema."""
-    op.execute('DROP INDEX IF EXISTS app.document_chunks_content_vector_hnsw_idx')
-
-    op.drop_table('document_chunks', schema='app')
-    op.drop_table('documents', schema='app')
+#
+# def downgrade() -> None:
+#    """Downgrade schema."""
+#    op.execute('DROP INDEX IF EXISTS app.document_chunks_content_vector_hnsw_idx')
+#
+#   op.drop_table('document_chunks', schema='app')
+#    op.drop_table('documents', schema='app')

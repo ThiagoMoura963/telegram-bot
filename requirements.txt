@@ -1,7 +1,10 @@
+aiosmtplib==5.1.0
 alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
+bcrypt==4.0.1
+blinker==1.9.0
 certifi==2026.2.25
 cffi==2.0.0
 charset-normalizer==3.4.5
@@ -12,6 +15,10 @@ distro==1.9.0
 dnspython==2.8.0
 docopt==0.6.2
 dotenv==0.9.9
+ecdsa==0.19.2
+email-validator==2.3.0
+fastapi==0.135.1
+fastapi-mail==1.6.2
 email-validator==2.3.0
 fastapi==0.135.1
 fastapi-cli==0.0.24
@@ -42,6 +49,7 @@ mypy_extensions==1.1.0
 numpy==2.4.3
 orjson==3.11.7
 packaging==26.0
+passlib==1.7.4
 pathspec==1.0.4
 pgvector==0.4.2
 pluggy==1.6.0
@@ -61,10 +69,16 @@ pytest==9.0.2
 pytest-mock==3.15.1
 pytest-watch==4.2.0
 python-dotenv==1.2.2
-python-multipart==0.0.22
+python-jose==3.5.0
+python-multipart==0.0.26
 PyYAML==6.0.3
+redis==7.4.0
+regex==2025.11.3
 requests==2.32.5
 requests-toolbelt==1.0.0
+rsa==4.9.1
+ruff==0.15.8
+six==1.17.0
 rich==14.3.3
 rich-toolkit==0.19.7
 rignore==0.7.6
