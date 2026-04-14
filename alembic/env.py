@@ -1,11 +1,11 @@
 import os
 from logging.config import fileConfig
 
-from backend.Schemas.base import Base
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from backend.schemas.base import Base
 
 load_dotenv('.env.development')
 
@@ -70,6 +70,11 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        from sqlalchemy import text
+
+        connection.execute(text('CREATE SCHEMA IF NOT EXISTS app'))
+        connection.commit()
+
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
