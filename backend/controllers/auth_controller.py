@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.schemas.auth import ForgotPasswordRequest, ResetPasswordRequest
@@ -31,7 +31,9 @@ async def register(user_in: UserCreate):
 
 
 @router.post('/login')
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+async def login(
+    response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+):
     result = auth_service.login(form_data.username, form_data.password)
 
     if not result:
@@ -41,7 +43,18 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
-    return result
+    token = result.get('access_token')
+
+    response.set_cookie(
+        key='access_token',
+        value=token,
+        httponly=False,
+        max_age=3600,
+        samesite='none',
+        secure=True,
+    )
+
+    return {'status': 'success', 'message': 'Logado com sucesso'}
 
 
 @router.post('/forgot-password', status_code=status.HTTP_200_OK)
