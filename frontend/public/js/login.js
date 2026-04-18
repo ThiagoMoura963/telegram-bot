@@ -29,7 +29,7 @@ async function login(email, password) {
     }
 }
 
-document.getElementById('submit').addEventListener('submit', function(e) {
+document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const emailValue = document.getElementById('email').value;
     const passwordValue = document.getElementById('password').value;
