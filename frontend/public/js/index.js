@@ -1,6 +1,6 @@
 let agents = [
-    { id: 1, nome: "Suporte TI", instrucao: "Responder tickets de nível 1", token: "123456789:ABCDefghIJKLmnoPQRstuvWXyz-1234567890" },
-    { id: 2, nome: "Vendas Bot", instrucao: "Pela imagem, parece que você tentou colocar o botão de criação dentro da Navbar ou usou Flexbox sem definir o espaço corretamente. O ideal é que o botão de criação fique abaixo da Navbar e centralizado na página, conforme o layout de dashboard que geramos.", token: "123456789:ABCDefghIJKLmnoPQRstuvWXyz-1234567890" }
+    { id: 1, nome: "Suporte TI", descricao: "Agente para suporte de TI", instrucao: "Responder tickets de nível 1", token: "123456789:ABCDefghIJKLmnoPQRstuvWXyz-1234567890" },
+    { id: 2, nome: "Vendas Bot", descricao: "Agente para vendas", instrucao: "Pela imagem, parece que você tentou colocar o botão de criação dentro da Navbar ou usou Flexbox sem definir o espaço corretamente. O ideal é que o botão de criação fique abaixo da Navbar e centralizado na página, conforme o layout de dashboard que geramos.", token: "123456789:ABCDefghIJKLmnoPQRstuvWXyz-1234567890" }
 ];
 
 function createCardHTML(agent){
@@ -11,7 +11,7 @@ function createCardHTML(agent){
                     <h3>${agent.nome}</h3>
                 </div>
             </div>
-            <p class="card-desc">${agent.instrucao}</p>
+            <p class="card-desc">${agent.descricao}</p>
             <div class="card-footer">
                 <button class="config-card-btn" onclick="configAgent(${agent.id})">
                     <i class="fa-solid fa-gear"></i> Configurar
@@ -47,6 +47,7 @@ function addAgent(){
         let agent = {
             id: agents.length + 1, 
             nome: document.getElementById('name').value, 
+            descricao: document.getElementById('description'),
             instrucao: document.getElementById('instruction').value, 
             token: document.getElementById('tokenTelegram').value
         };
@@ -64,6 +65,7 @@ function configAgent(id){
 
     if(agent){
         document.getElementById("nameConfig").setAttribute("value", agent.nome);
+        document.getElementById("descriptionConfig").value = agent.descricao;
         document.getElementById("instructionConfig").value = agent.instrucao;
         document.getElementById("tokenTelegramConfig").value = agent.token;
 
