@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.schemas.auth import ForgotPasswordRequest, ResetPasswordRequest
@@ -39,7 +39,18 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
-    return result
+    token = result.get('access_token')
+
+    response.set_cookie(
+        key='access_token',
+        value=token,
+        httponly=False,
+        max_age=3600,
+        samesite='none',
+        secure=True,
+    )
+
+    return {'status': 'success', 'message': 'Logado com sucesso'}
 
 
 @router.post('/forgot-password', status_code=status.HTTP_200_OK)

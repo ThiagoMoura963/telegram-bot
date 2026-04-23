@@ -12,26 +12,28 @@
         <div class="login-header">
             <header>Login</header>
         </div>
-        <div class="input-box">
-            <label for="email">Email</label>
-            <input id="email" type="text" class="input-field" placeholder="Insira o email" autocomplete="off" required>
-        </div>
-        <div class="input-box">
-            <label for="password">Senha</label>
-            <div class="password-container">
-                <input id="password" type="password" class="input-field" placeholder="Insira a senha" autocomplete="off" required>
-                <i class="fa-solid fa-eye" id="togglePassword"></i>
+        <form id="login-form">
+            <div class="input-box">
+                <label for="email">Email</label>
+                <input id="email" type="text" class="input-field" placeholder="Insira o email" autocomplete="off" required>
             </div>
-        </div>
-        <div class="forgot">
-            <section>
-                <a href="forgotPassword.html">Esqueci a senha</a>
-            </section>
-        </div>
-        <div class="input-submit">
-            <button class="submit-btn" id="submit">Entrar</button>
-            <label for="submit">Entrar</label>
-        </div>
+            <div class="input-box">
+                <label for="password">Senha</label>
+                <div class="password-container">
+                    <input id="password" type="password" class="input-field" placeholder="Insira a senha" autocomplete="off" required>
+                    <i class="fa-solid fa-eye" id="togglePassword"></i>
+                </div>
+            </div>
+            <div class="forgot">
+                <section>
+                    <a href="forgotPassword.html">Esqueci a senha</a>
+                </section>
+            </div>
+            <div class="input-submit">
+                <button class="submit-btn" id="submit">Entrar</button>
+                <label for="submit">Entrar</label>
+            </div>
+        </form>
     </div>
 
     <script src="../js/login.js"></script>

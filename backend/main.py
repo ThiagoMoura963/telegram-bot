@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.controllers.agent_controller import router as agent_router
 from backend.controllers.agent_controller import router as bot_router
@@ -21,3 +22,11 @@ app.include_router(status_router)
 app.include_router(auth_router)
 app.include_router(document_router)
 app.include_router(agent_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['https://telegram-bot-three-vert.vercel.app'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
