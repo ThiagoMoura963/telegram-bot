@@ -18,7 +18,7 @@ def get_agents(request: Request, user_id: Annotated[str, Depends(get_current_use
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Agents not found.')
     
     return {
-        'id': age
+        'id': age,
         'name': agents[0],
     }
 
