@@ -2,15 +2,13 @@ from psycopg2.extras import execute_values
 
 from backend.infra.database import PostgresManager
 
+
 class ChunksRepository:
     def __init__(self):
         self.postgres_manager = PostgresManager()
 
     def save_all(self, document_id, chunks_data):
-        sql = (
-            'INSERT INTO app.document_chunks '
-            '(document_id, content, content_vector) VALUES %s'
-        )
+        sql = 'INSERT INTO app.document_chunks (document_id, content, content_vector) VALUES %s'
 
         values = [(document_id, chunk, list(vector)) for chunk, vector in chunks_data]
         try:
@@ -27,7 +25,7 @@ class ChunksRepository:
             'WHERE dc.agent_id = %s '
             'ORDER BY dc.content_vector <=> %s::vector '
             'LIMIT %s;'
-        ) 
+        )
 
         try:
             with self.postgres_manager as cursor:

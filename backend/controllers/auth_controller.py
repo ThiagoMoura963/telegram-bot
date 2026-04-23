@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.schemas.auth import ForgotPasswordRequest, ResetPasswordRequest
@@ -15,9 +15,7 @@ auth_service = AuthService()
 user_service = UserService()
 
 
-@router.post(
-    '/register', response_model=UserResponse, status_code=status.HTTP_201_CREATED
-)
+@router.post('/register', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_in: UserCreate):
     try:
         user_id = user_service.create_user(user_in)
@@ -31,7 +29,7 @@ async def register(user_in: UserCreate):
 
 
 @router.post('/login')
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     result = auth_service.login(form_data.username, form_data.password)
 
     if not result:
@@ -45,9 +43,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
 
 @router.post('/forgot-password', status_code=status.HTTP_200_OK)
-async def forgot_password(
-    data: ForgotPasswordRequest, background_tasks: BackgroundTasks
-):
+async def forgot_password(data: ForgotPasswordRequest, background_tasks: BackgroundTasks):
     user = user_service.get_user_by_email(data.email)
 
     if user:
@@ -57,9 +53,7 @@ async def forgot_password(
 
     return {
         'status': 'success',
-        'message': (
-            'Se o e-mail estiver cadastrado, um código de 6 dígitos foi enviado.'
-        ),
+        'message': ('Se o e-mail estiver cadastrado, um código de 6 dígitos foi enviado.'),
     }
 
 

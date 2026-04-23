@@ -18,6 +18,4 @@ class ChatService:
         try:
             return self.provider.generate_embeddings(texts)
         except Exception as e:
-            raise RuntimeError(
-                f'ChatService falhou ao vetorizar documentos: {e}'
-            ) from e
+            raise RuntimeError(f'ChatService falhou ao vetorizar documentos: {e}') from e

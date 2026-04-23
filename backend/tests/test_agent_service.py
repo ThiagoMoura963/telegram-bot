@@ -1,12 +1,14 @@
-#type: ignore
+# type: ignore
 
 from unittest.mock import MagicMock, patch
+
 from backend.services.agent_setup_service import AgentSetupService
+
 
 def test_register_webhook_success():
     mock_repo = MagicMock()
     service = AgentSetupService(mock_repo)
-    
+
     test_token = 'fake-token'
     test_url = 'http://test/webhook'
     user_id = 'user-id-teste'
@@ -18,17 +20,14 @@ def test_register_webhook_success():
         }
 
         success, message = service.activate_agent(1, test_token, test_url, user_id)
-        
+
         assert success is True
         assert message == 'Webhook configured'
 
         expected_endpoint = f'https://api.telegram.org/bot{test_token}/setWebhook'
-        
-        mock_post.assert_called_once_with(
-            expected_endpoint, 
-            data={'url': test_url},
-            timeout=10
-        )
+
+        mock_post.assert_called_once_with(expected_endpoint, data={'url': test_url}, timeout=10)
+
 
 def test_get_telegram_info():
     mock_repo = MagicMock()

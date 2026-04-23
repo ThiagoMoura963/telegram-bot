@@ -5,11 +5,10 @@ Revises: f56459a7eaaa
 Create Date: 2026-04-18 19:08:45.429634
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision: str = '2ce84d3d9c85'
@@ -27,15 +26,11 @@ def upgrade() -> None:
         ['id'],
         source_schema='app',
         referent_schema='app',
-        ondelete='CASCADE'
+        ondelete='CASCADE',
     )
 
-    op.create_index(
-        'idx_chunks_document_id',
-        'document_chunks',
-        ['document_id'],
-        schema='app'
-    )
+    op.create_index('idx_chunks_document_id', 'document_chunks', ['document_id'], schema='app')
+
 
 def downgrade() -> None:
     op.drop_index('idx_chunks_document_id', table_name='document_chunks', schema='app')

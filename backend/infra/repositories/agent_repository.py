@@ -1,13 +1,14 @@
 from ..database import PostgresManager
 
+
 class AgentRepository:
     def __init__(self):
         self.postgres_manager = PostgresManager()
-            
+
     def _row_to_dict(self, row):
         if not row:
             return None
-        
+
         return {
             'id': str(row[0]),
             'name': row[1],
@@ -17,22 +18,19 @@ class AgentRepository:
             'is_active': row[5],
             'user_id': row[6],
         }
-    
+
     def get_all(self, user_id):
         print('USER ID:', user_id)
-        sql = (
-            'SELECT id, name FROM app.agents '
-            'WHERE user_id = %s;'
-        )
+        sql = 'SELECT id, name FROM app.agents WHERE user_id = %s;'
 
         try:
             with self.postgres_manager as cursor:
                 cursor.execute(sql, (user_id,))
                 rows = cursor.fetchall()
-                
+
                 if not rows:
                     return []
-                
+
                 return [{'id': str(row[0]), 'name': row[1]} for row in rows]
         except Exception as e:
             raise RuntimeError(f'Erro ao buscar os agentes: {e}') from e
@@ -51,7 +49,7 @@ class AgentRepository:
                 return row[0] if row else None
         except Exception as e:
             raise RuntimeError(f'Erro ao inserir agente: {e}') from e
-        
+
     def get_by_id(self, agent_id, user_id):
         sql = (
             'SELECT id, name, system_prompt, telegram_token, api_token, is_active, user_id '
@@ -66,7 +64,7 @@ class AgentRepository:
 
         except Exception as e:
             raise RuntimeError(f'Erro ao buscar agente({agent_id}): {e}') from e
-        
+
     def get_by_api_token(self, api_token):
         sql = (
             'SELECT id, name, system_prompt, telegram_token, api_token, is_active, user_id '
@@ -80,14 +78,14 @@ class AgentRepository:
                 return self._row_to_dict(cursor.fetchone())
         except Exception as e:
             raise RuntimeError(f'Erro ao buscar agente({api_token}): {e}') from e
-    
+
     def update(self, agent_id, agent_data, user_id):
         sql = (
             'UPDATE app.agents SET '
             'name = COALESCE(%s, name), '
-            'system_prompt = COALESCE(%s, system_prompt), ' 
+            'system_prompt = COALESCE(%s, system_prompt), '
             'is_active = COALESCE(%s, is_active) '
-            'WHERE id = %s AND user_id = %s;' 
+            'WHERE id = %s AND user_id = %s;'
         )
 
         params = (
@@ -104,7 +102,7 @@ class AgentRepository:
                 return cursor.rowcount > 0
         except Exception as e:
             raise RuntimeError(f'Erro ao atualizar agente({agent_id}): {e}') from e
-        
+
     def delete(self, agent_id, user_id):
         sql = 'DELETE FROM app.agents WHERE id = %s AND user_id = %s;'
 

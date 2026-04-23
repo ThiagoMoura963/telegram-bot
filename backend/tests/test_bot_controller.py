@@ -1,29 +1,29 @@
-from unittest.mock import patch, ANY
-from backend.main import app
+from unittest.mock import patch
+
 from backend.core.deps import get_current_user_id
+from backend.main import app
+
 
 def test_activate_bot(client):
-    app.dependency_overrides[get_current_user_id] = lambda: "user-id-teste"
-    
+    app.dependency_overrides[get_current_user_id] = lambda: 'user-id-teste'
+
     repo_target = 'backend.controllers.telegram_controller.AgentRepository'
     service_target = 'backend.controllers.telegram_controller.AgentSetupService.activate_agent'
-    
-    with patch(repo_target) as mock_repo_class, \
-         patch(service_target) as mock_setup:
-        
+
+    with patch(repo_target) as mock_repo_class, patch(service_target) as mock_setup:
         mock_repo_instance = mock_repo_class.return_value
-        
+
         mock_repo_instance.get_by_id.return_value = {
-            'id': 1, 
+            'id': 1,
             'name': 'Agente Teste',
             'telegram_token': 'my-token',
             'api_token': 'at_token_teste_123',
             'user_id': 'user-id-teste',
-            'is_active': True
+            'is_active': True,
         }
-        
+
         mock_setup.return_value = (True, 'Webhook set successfully')
-        
+
         test_token = 'my-token'
         agent_id = 1
 
@@ -34,9 +34,10 @@ def test_activate_bot(client):
         assert response.status_code == 200
         assert response.json()['status'] == 'success'
 
+
 def test_get_bot_info(client):
     test_token = 'my-token'
-    
+
     mock_telegram_response = {
         'ok': True,
         'result': {

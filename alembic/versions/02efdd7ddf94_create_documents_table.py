@@ -67,9 +67,7 @@ def upgrade() -> None:
         ),
         sa.Column('content', sa.String(), nullable=False),
         sa.Column('content_vector', Vector(1536), nullable=False),
-        sa.Column(
-            'created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()')
-        ),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()')),
         schema='app',
     )
 

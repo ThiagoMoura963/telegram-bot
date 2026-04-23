@@ -24,9 +24,7 @@ def get_status():
         database_max_connections_value = database_max_connections_result[0]
 
         database_name = postgres_manager.conn.info.dbname
-        cursor.execute(
-            'SELECT count(*) FROM pg_stat_activity WHERE datname = %s', (database_name,)
-        )
+        cursor.execute('SELECT count(*) FROM pg_stat_activity WHERE datname = %s', (database_name,))
         database_opened_connections_result = cursor.fetchone()
         database_opened_connections_value = database_opened_connections_result[0]
 
