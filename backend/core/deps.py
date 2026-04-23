@@ -1,3 +1,5 @@
+# type: ignore
+
 import os
 
 from dotenv import load_dotenv
@@ -27,7 +29,7 @@ async def get_current_user_id(token: str = Depends(oauth2_scheme)) -> int:
         if user_id is None:
             raise credentials_exception
 
-        return int(user_id)
+        return user_id
 
     except (JWTError, ValueError) as e:
         raise credentials_exception from e

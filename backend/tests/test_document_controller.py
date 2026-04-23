@@ -19,24 +19,16 @@ def test_upload_document(client, mocker, file_name, content_type, content):
     mock_uuid = '550e8400-e29b-41d4-a716-446655440000'
     mock_chunks = [{'text': 'part 1', 'vector': [0.1]}]
 
-    mock_doc_repo_class = mocker.patch(
-        'backend.controllers.document_controller.DocumentRepository', autospec=True
-    )
+    mock_doc_repo_class = mocker.patch('backend.controllers.document_controller.DocumentRepository', autospec=True)
     mock_doc_repo: DocumentRepository = mock_doc_repo_class.return_value
     mock_doc_repo.save.return_value = mock_uuid
 
-    mock_chunks_repo_class = mocker.patch(
-        'backend.controllers.document_controller.ChunksRepository', autospec=True
-    )
+    mock_chunks_repo_class = mocker.patch('backend.controllers.document_controller.ChunksRepository', autospec=True)
     mock_chunks_repo: ChunksRepository = mock_chunks_repo_class.return_value
 
-    mock_get_processor = mocker.patch(
-        'backend.controllers.document_controller.get_document_processor'
-    )
+    mock_get_processor = mocker.patch('backend.controllers.document_controller.get_document_processor')
 
-    mock_service_class = mocker.patch(
-        'backend.controllers.document_controller.DocumentService', autospec=True
-    )
+    mock_service_class = mocker.patch('backend.controllers.document_controller.DocumentService', autospec=True)
     mock_service: DocumentService = mock_service_class.return_value
     mock_service.process.return_value = mock_chunks
 

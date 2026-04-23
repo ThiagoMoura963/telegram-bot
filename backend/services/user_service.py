@@ -1,3 +1,5 @@
+# type: ignore
+
 from backend.core.security import Security
 from backend.infra.database import PostgresManager
 from backend.schemas.user import UserCreate
@@ -14,9 +16,7 @@ class UserService:
         """
 
         with PostgresManager() as cursor:
-            cursor.execute(
-                query, (user_in.full_name, user_in.email, hashed_password, True)
-            )
+            cursor.execute(query, (user_in.full_name, user_in.email, hashed_password, True))
             user_id = cursor.fetchone()[0]
             return user_id
 

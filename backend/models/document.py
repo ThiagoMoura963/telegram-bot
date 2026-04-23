@@ -11,29 +11,19 @@ class Document(Base):
     __tablename__ = 'documents'
     __table_args__ = {'schema': 'app'}
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid()
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
     file_name = Column(Text, nullable=False)
-    created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    chunks = relationship(
-        'DocumentChunk', back_populates='document', cascade='all, delete-orphan'
-    )
+    chunks = relationship('DocumentChunk', back_populates='document', cascade='all, delete-orphan')
 
 
 class DocumentChunk(Base):
     __tablename__ = 'document_chunks'
     __table_args__ = {'schema': 'app'}
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid()
-    )
-    document_id = Column(
-        UUID(as_uuid=True), ForeignKey('app.documents.id'), nullable=False
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    document_id = Column(UUID(as_uuid=True), ForeignKey('app.documents.id'), nullable=False)
     content = Column(String, nullable=False)
 
     content_vector = Column(Vector(1536), nullable=False)
