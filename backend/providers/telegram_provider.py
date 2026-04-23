@@ -1,22 +1,22 @@
-# type: ignore
-import os
-
 import telebot
-from dotenv import load_dotenv
 from telebot import types
 
 from backend.infra.repositories.chunks_repository import ChunksRepository
 from backend.services.chat_service import ChatService
-
-load_dotenv('.env.development')
-
+from backend.infra.repositories.agent_repository import AgentRepository
 
 class TelegramProvider:
-    def __init__(self):
-        self.token = os.getenv('TELEGRAM_API_KEY')
-        self.bot = telebot.TeleBot(self.token)
+    def process_webhook(self, agent_id, user_id, json_data, chat_service: ChatService):
+        agent_repository = AgentRepository()
+        agent = agent_repository.get_by_id(agent_id, user_id)
 
-    def process_webhook(self, json_data, chat_service: ChatService):
+
+        if not agent or not agent['is_active']:
+            return
+        
+        print('ID do TELEGRAM:', agent['telegram_token'])
+        
+        bot = telebot.TeleBot(agent['telegram_token'])
         update = types.Update.de_json(json_data)
 
         if not (update and update.message and update.message.text):
@@ -28,7 +28,7 @@ class TelegramProvider:
         embedding_message = chat_service.get_query_vector(user_message)
 
         chunk_repository = ChunksRepository()
-        candidate_chunks = chunk_repository.find_similiar_chunk(embedding_message, 15)
+        candidate_chunks = chunk_repository.find_similiar_chunk(embedding_message, limit=15, agent_id=agent_id)
 
         if candidate_chunks:
             context = '\n\n'.join(
@@ -52,7 +52,7 @@ class TelegramProvider:
 
         answer = chat_service.get_answer(
             message=final_prompt,
-            system_instruction='Responda de forma ignorante',
+            system_instruction=agent['system_prompt'],
         )
 
-        self.bot.send_message(chat_id, answer)
+        bot.send_message(chat_id, answer)

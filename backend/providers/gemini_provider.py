@@ -10,6 +10,8 @@ class GeminiProvider:
     def __init__(self):
         self.client = Client(api_key=os.getenv('GEMINI_API_KEY'))
 
+        print(os.getenv('GEMINI_API_KEY'))
+
     def generate_text(self, prompt: str, system_instruction: str) -> str:
         try:
             response = self.client.models.generate_content(
