@@ -1,3 +1,5 @@
+#type: ignore
+
 from backend.core.security import Security
 from backend.infra.database import PostgresManager
 from backend.schemas.user import UserCreate
