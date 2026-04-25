@@ -11,7 +11,7 @@ from backend.services.document_service import DocumentService
 router = APIRouter(prefix='/api/v1/document', tags=['Document Manager'])
 
 
-@router.post('/{agent_id}')
+@router.get('/{agent_id}')
 async def get_document(user_id: Annotated[str, Depends(get_current_user_id)], agent_id):
 
     document_repository = DocumentRepository()
