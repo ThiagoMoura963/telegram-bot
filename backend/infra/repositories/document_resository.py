@@ -10,7 +10,7 @@ class DocumentRepository:
             'SELECT DISTINCT d.id, d.file_name, d.created_at '
             'FROM app.documents d '
             'INNER JOIN app.document_chunks dc ON dc.document_id = d.id '
-            'WHERE dc.user_id = %s AND dc.agent_id = %s'
+            'WHERE dc.user_id = %s AND dc.agent_id = %s '
             'ORDER BY d.created_at DESC;'
         )
 
