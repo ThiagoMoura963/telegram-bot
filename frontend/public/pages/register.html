@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/login.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/frontend/public/assets/robot-ico.png"
+    />
+    <title>Cadastro - Gerenciador de Agentes</title>
+  </head>
+  <body>
+    <div class="login-box">
+      <div class="login-header">
+        <header>Cadastre-se</header>
+      </div>
+      <form id="register-form">
+        <div class="input-box">
+          <label for="name">Nome Completo</label>
+          <input
+            id="name"
+            type="text"
+            class="input-field"
+            placeholder="Insira o nome completo"
+            autocomplete="off"
+          />
+          <span id="name-error" class="error-text"></span>
+        </div>
+        <div class="input-box">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="text"
+            class="input-field"
+            placeholder="Insira o email"
+            autocomplete="off"
+          />
+          <span id="email-error" class="error-text"></span>
+        </div>
+        <div class="input-box">
+          <label for="password">Senha</label>
+          <div class="password-container">
+            <input
+              id="password"
+              type="text"
+              class="input-field"
+              placeholder="Insira a senha"
+              autocomplete="off"
+            />
+            <i class="fa-solid fa-eye" id="togglePassword"></i>
+          </div>
+          <span id="password-error" class="error-text"></span>
+        </div>
+
+        <div class="input-submit">
+          <button type="submit" class="submit-btn" id="submit">
+            <span class="btn-text">Cadastrar</span>
+            <span class="spinner"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script type="module" src="../js/register.js"></script>
+  </body>
+</html>

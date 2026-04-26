@@ -1,21 +1,6 @@
 import { API_URL } from "./config.js";
 import { authValidator } from "./validators/authValidator.js";
 
-const toggleButtons = document.querySelectorAll(".password-container i");
-
-toggleButtons.forEach((button) => {
-  button.addEventListener("click", function () {
-    const passwordInput = this.parentElement.querySelector("input");
-
-    const type =
-      passwordInput.getAttribute("type") === "password" ? "text" : "password";
-    passwordInput.setAttribute("type", type);
-
-    this.classList.toggle("fa-eye");
-    this.classList.toggle("fa-eye-slash");
-  });
-});
-
 function cleanErrors() {
   document.querySelectorAll(".error-text").forEach((el) => {
     el.textContent = "";
@@ -23,6 +8,9 @@ function cleanErrors() {
   document.querySelectorAll(".invalid").forEach((el) => {
     el.classList.remove("invalid");
   });
+
+  const generalError = document.getElementById("general-error");
+  if (generalError) generalError.textContent = "";
 }
 
 function showErrors(errors) {
@@ -30,47 +18,43 @@ function showErrors(errors) {
 
   Object.keys(errors).forEach((key) => {
     const errorSpan = document.getElementById(`${key}-error`);
-    console.log("Error Span:", errorSpan);
     if (errorSpan) {
       errorSpan.textContent = errors[key];
     }
 
     const inputField = document.getElementById(key);
-    console.log("Input Field:", inputField);
-
     if (inputField) {
       inputField.classList.add("invalid");
     }
   });
 }
 
-async function resetPassword(code, email, password, confirmPassword) {
+async function verifyCode(code, email) {
   const btnSubmit = document.getElementById("submit");
   const generalError = document.getElementById("general-error");
 
-  const errors = authValidator.resetPassword(password, confirmPassword);
-  console.log("Errors:", errors);
+  const errors = authValidator.verifyCode(code, email);
+
   if (Object.keys(errors).length) {
     showErrors(errors);
     return;
   }
 
-  const resetPasswordData = {
+  const verifyCodeData = {
     email: email,
     code: code,
-    new_password: password,
   };
 
   btnSubmit.classList.add("loading");
   btnSubmit.disabled = true;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
+    const response = await fetch(`${API_URL}/api/v1/auth/verify-code`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(resetPasswordData),
+      body: JSON.stringify(verifyCodeData),
     });
 
     const result = await response.json();
@@ -87,12 +71,12 @@ async function resetPassword(code, email, password, confirmPassword) {
       return;
     }
 
-    localStorage.removeItem("reset_code");
-    localStorage.removeItem("reset_email");
-
-    window.location.href = "login.html";
+    localStorage.setItem("reset_code", code);
+    window.location.href = "resetPassword.html";
   } catch (error) {
-    console.error("Falha ao alterar a senha:", error);
+    console.error("Falha ao verificar o código:", error);
+
+    generalError.textContent = "Erro de conexão com o servidor.";
 
     btnSubmit.classList.remove("loading");
     btnSubmit.disabled = false;
@@ -102,11 +86,16 @@ async function resetPassword(code, email, password, confirmPassword) {
 document.getElementById("submit").addEventListener("click", function (e) {
   e.preventDefault();
 
-  const code = localStorage.getItem("reset_code");
+  const codeInputGroup = document.querySelector(".code-input-group");
+  const codeInputs = codeInputGroup.querySelectorAll("input");
+
+  const code = Array.from(codeInputs)
+    .map((input) => {
+      return input.value;
+    })
+    .join("");
+
   const email = localStorage.getItem("reset_email");
 
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-
-  resetPassword(code, email, password, confirmPassword);
+  verifyCode(code, email);
 });
