@@ -9,6 +9,7 @@ class VerifyCodeRequest(BaseModel):
     email: EmailStr
     code: str = Field(..., min_length=6, max_length=6)
 
+
 class ResetPasswordRequest(BaseModel):
     email: EmailStr
     code: str = Field(..., min_length=6, max_length=6)

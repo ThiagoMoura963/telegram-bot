@@ -20,6 +20,7 @@ conf = ConnectionConfig(
     VALIDATE_CERTS=True,
 )
 
+
 class MailService:
     @staticmethod
     async def send_recovery_email(email_to: str, code: str):

@@ -21,10 +21,8 @@ def get_agents(user_id: Annotated[str, Depends(get_current_user_id)]):
     if not agents:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Agents not found.')
 
-    return [
-        {'id': agent['id'], 'name': agent['name']} 
-        for agent in agents 
-    ]
+    return [{'id': agent['id'], 'name': agent['name']} for agent in agents]
+
 
 @router.post('')
 async def create_agent(request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
