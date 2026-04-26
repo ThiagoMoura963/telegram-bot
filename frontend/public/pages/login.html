@@ -1,41 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/login.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/frontend/public/assets/robot-ico.png"
+    />
+
     <title>Login - Gerenciador de Agentes</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="login-box">
-        <div class="login-header">
-            <header>Login</header>
+      <div class="login-header">
+        <header>Login</header>
+      </div>
+      <form id="login-form">
+        <div class="input-box">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="text"
+            class="input-field"
+            placeholder="Insira o email"
+            autocomplete="off"
+          />
+          <span id="email-error" class="error-text"></span>
         </div>
-        <form id="login-form">
-            <div class="input-box">
-                <label for="email">Email</label>
-                <input id="email" type="text" class="input-field" placeholder="Insira o email" autocomplete="off" required>
-            </div>
-            <div class="input-box">
-                <label for="password">Senha</label>
-                <div class="password-container">
-                    <input id="password" type="password" class="input-field" placeholder="Insira a senha" autocomplete="off" required>
-                    <i class="fa-solid fa-eye" id="togglePassword"></i>
-                </div>
-            </div>
-            <div class="forgot">
-                <section>
-                    <a href="forgotPassword.html">Esqueci a senha</a>
-                </section>
-            </div>
-            <div class="input-submit">
-                <button class="submit-btn" id="submit">Entrar</button>
-                <label for="submit">Entrar</label>
-            </div>
-        </form>
+        <div class="input-box">
+          <label for="password">Senha</label>
+          <div class="password-container">
+            <input
+              id="password"
+              type="password"
+              class="input-field"
+              placeholder="Insira a senha"
+              autocomplete="off"
+            />
+            <i class="fa-solid fa-eye" id="togglePassword"></i>
+          </div>
+          <span id="password-error" class="error-text"></span>
+        </div>
+        <div class="forgot">
+          <section>
+            <a href="forgotPassword.html">Esqueci a senha</a>
+          </section>
+        </div>
+
+        <div
+          id="general-error"
+          class="error-text"
+          style="text-align: center; margin-bottom: 10px"
+        ></div>
+
+        <div class="input-submit">
+          <button type="submit" class="submit-btn" id="submit">
+            <span class="btn-text">Entrar</span>
+            <span class="spinner"></span>
+          </button>
+
+          <div class="forgot">
+            <section>
+              <span style="margin-top: 10px !important">
+                Ainda não possui uma conta?
+                <a
+                  href="register.html"
+                  style="font-weight: 500; margin-top: 10px"
+                >
+                  Cadastre-se agora
+                </a>
+              </span>
+            </section>
+          </div>
+        </div>
+      </form>
     </div>
 
-    <script src="../js/login.js"></script>
-</body>
+    <script type="module" src="../js/login.js"></script>
+  </body>
 </html>
