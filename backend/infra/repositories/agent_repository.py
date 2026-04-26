@@ -20,7 +20,6 @@ class AgentRepository:
         }
 
     def get_all(self, user_id):
-        print('USER ID:', user_id)
         sql = 'SELECT id, name FROM app.agents WHERE user_id = %s;'
 
         try:

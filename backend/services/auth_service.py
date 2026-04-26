@@ -30,7 +30,7 @@ class AuthService:
 
         return code
 
-    def validate_recovery_code(self, email: str, user_code: str) -> bool:
+    def validate_recovery_code(self, email: str, user_code: str, auto_delete: bool = True) -> bool:
         key = f'password_reset:{email}'
         stored_code = self.redis.get(key)
 
@@ -41,7 +41,8 @@ class AuthService:
             stored_code = stored_code.decode('utf-8')
 
         if stored_code == user_code:
-            self.redis.delete(key)
+            if auto_delete:
+                self.redis.delete(key)
             return True
 
         return False

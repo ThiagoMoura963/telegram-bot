@@ -14,17 +14,14 @@ router = APIRouter(prefix='/api/v1/agent', tags=['Agent Manager'])
 
 
 @router.get('')
-def get_agents(request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
+def get_agents(user_id: Annotated[str, Depends(get_current_user_id)]):
     agent_repository = AgentRepository()
     agents = agent_repository.get_all(user_id)
 
-    if agents is None:
+    if not agents:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Agents not found.')
 
-    return {
-        'id': agents[0]['id'],
-        'name': agents[0]['name'],
-    }
+    return [{'id': agent['id'], 'name': agent['name']} for agent in agents]
 
 
 @router.post('')
