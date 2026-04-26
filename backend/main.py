@@ -23,10 +23,17 @@ app.include_router(auth_router)
 app.include_router(document_router)
 app.include_router(agent_router)
 
+origins = [
+    "https://telegram-bot-three-vert.vercel.app",
+    "http://localhost:5500",                   
+    "http://127.0.0.1:5500",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['https://telegram-bot-three-vert.vercel.app'],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
 )
+

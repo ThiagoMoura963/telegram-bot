@@ -1,9 +1,11 @@
+# type: ignore
+
 import os
 
 from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
-load_dotenv()
+load_dotenv('.env.development')
 
 conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv('MAIL_USERNAME', 'temp@example.com'),
@@ -17,7 +19,6 @@ conf = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
 )
-
 
 class MailService:
     @staticmethod
