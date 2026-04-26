@@ -1,119 +1,157 @@
-@import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&display=swap");
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Alan Sans', sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Alan Sans", sans-serif;
 }
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: #dfdfdf;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #dfdfdf;
 }
 
-.code-box{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    width: 440px;
-    height: 480px;
-    padding: 30px;
+.code-box {
+  display: flex;
+  flex-direction: column;
+  width: 440px;
+  padding: 30px;
+  background: transparent;
 }
 
-.code-header{
-    text-align: center;
-    margin: 20px 0 40px 0;
+.code-header {
+  text-align: center;
+  margin: 20px 0 30px 0;
 }
 
-.code-header header{
-    color: #333;
-    font-size: 30px;
-    font-weight: 600;
-}
-
-section{
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #555;
-}
-
-a{
-    text-decoration: none;
-}
-
-a:hover{
-    text-decoration: underline;
-
-}
-
-section a{
-    color: #555;
-    margin: auto;
-    margin-top: 5%;
-    font-size: 18px;
-}
-
-.input-submit{
-    position: relative;
-}
-
-.submit-btn{
-    width: 100%;
-    height: 60px;
-    background: #222;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: .3s;
-}
-
-.input-submit label{
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    color: #fff;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-}
-
-.submit-btn:hover{
-    background: #000;
-    transform: scale(1.05,1);
-}
-
-.code-input-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
-.code-digit {
-    width: 45px;
-    height: 60px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: 700;
-    border-radius: 12px;
-    border: 2px solid #ccc;
-    background: #fff;
-    color: #333;
-    transition: .3s;
-}
-
-.code-digit:focus {
-    border-color: #000;
-    outline: none;
-    box-shadow: 0px 5px 10px 1px rgba(0, 0, 0, 0.05);
+.code-header header {
+  color: #333;
+  font-size: 30px;
+  font-weight: 600;
 }
 
 .code-instruction {
-    margin-bottom: 20px;
+  text-align: center;
+  color: #555;
+  font-size: 15px;
+  margin-bottom: 25px;
+  line-height: 1.4;
+}
+
+.code-input-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.code-digit {
+  width: 48px;
+  height: 60px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  background: #fff;
+  color: #333;
+  box-shadow: 0px 5px 10px 1px rgba(0, 0, 0, 0.05);
+  transition: 0.3s;
+  outline: none;
+}
+
+.code-digit:focus {
+  transform: scale(1.05);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid #222;
+}
+
+.code-digit.invalid {
+  border: 2px solid #dc3545 !important;
+  box-shadow: 0px 0px 8px rgba(220, 53, 69, 0.2);
+}
+
+.input-submit {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.submit-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  background: #222;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background: #000;
+  transform: scale(1.02);
+}
+
+.submit-btn.loading {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.submit-btn.loading .btn-text {
+  display: none;
+}
+
+.submit-btn.loading .spinner {
+  display: block;
+}
+
+.spinner {
+  display: none;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-text {
+  display: block;
+  font-size: 13px;
+  color: #dc3545;
+  margin-bottom: 15px;
+  font-weight: 500;
+  min-height: 18px;
+}
+
+.cancel {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.cancel a {
+  text-decoration: none;
+  color: #555;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.cancel a:hover {
+  text-decoration: underline;
+  color: #000;
 }

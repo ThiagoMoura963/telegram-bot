@@ -13,15 +13,25 @@
       type="image/x-icon"
       href="/frontend/public/assets/robot-ico.png"
     />
-
-    <title>Login - Gerenciador de Agentes</title>
+    <title>Cadastro - Gerenciador de Agentes</title>
   </head>
   <body>
     <div class="login-box">
       <div class="login-header">
-        <header>Login</header>
+        <header>Cadastre-se</header>
       </div>
-      <form id="login-form">
+      <form id="register-form">
+        <div class="input-box">
+          <label for="name">Nome Completo</label>
+          <input
+            id="name"
+            type="text"
+            class="input-field"
+            placeholder="Insira o nome completo"
+            autocomplete="off"
+          />
+          <span id="name-error" class="error-text"></span>
+        </div>
         <div class="input-box">
           <label for="email">Email</label>
           <input
@@ -38,7 +48,7 @@
           <div class="password-container">
             <input
               id="password"
-              type="password"
+              type="text"
               class="input-field"
               placeholder="Insira a senha"
               autocomplete="off"
@@ -47,41 +57,16 @@
           </div>
           <span id="password-error" class="error-text"></span>
         </div>
-        <div class="forgot">
-          <section>
-            <a href="forgotPassword.html">Esqueci a senha</a>
-          </section>
-        </div>
-
-        <div
-          id="general-error"
-          class="error-text"
-          style="text-align: center; margin-bottom: 10px"
-        ></div>
 
         <div class="input-submit">
           <button type="submit" class="submit-btn" id="submit">
-            <span class="btn-text">Entrar</span>
+            <span class="btn-text">Cadastrar</span>
             <span class="spinner"></span>
           </button>
-
-          <div class="forgot">
-            <section>
-              <span style="margin-top: 10px !important">
-                Ainda não possui uma conta?
-                <a
-                  href="register.html"
-                  style="font-weight: 500; margin-top: 10px"
-                >
-                  Cadastre-se agora
-                </a>
-              </span>
-            </section>
-          </div>
         </div>
       </form>
     </div>
 
-    <script type="module" src="../js/login.js"></script>
+    <script type="module" src="../js/register.js"></script>
   </body>
 </html>

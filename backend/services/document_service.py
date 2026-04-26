@@ -17,9 +17,7 @@ class DocumentService:
             text = self.processor.get_text(content)
 
             if not text.strip():
-                raise ValueError(
-                    'O documento está vazio ou não possui texto extraível.'
-                )
+                raise ValueError('O documento está vazio ou não possui texto extraível.')
 
             chunks = self.text_splitter.split_text(text)
 

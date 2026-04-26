@@ -10,14 +10,14 @@ class GeminiProvider:
     def __init__(self):
         self.client = Client(api_key=os.getenv('GEMINI_API_KEY'))
 
+        print(os.getenv('GEMINI_API_KEY'))
+
     def generate_text(self, prompt: str, system_instruction: str) -> str:
         try:
             response = self.client.models.generate_content(
                 model='gemini-3-flash-preview',
                 contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_instruction
-                ),
+                config=types.GenerateContentConfig(system_instruction=system_instruction),
             )
 
             if not response.text:
@@ -32,9 +32,7 @@ class GeminiProvider:
             response = self.client.models.embed_content(
                 model='gemini-embedding-2-preview',
                 contents=text,
-                config=types.EmbedContentConfig(
-                    output_dimensionality=1536, task_type='RETRIEVAL_QUERY'
-                ),
+                config=types.EmbedContentConfig(output_dimensionality=1536, task_type='RETRIEVAL_QUERY'),
             )
 
             if not response.embeddings or not response.embeddings[0].values:
@@ -49,9 +47,7 @@ class GeminiProvider:
             response = self.client.models.embed_content(
                 model='gemini-embedding-2-preview',
                 contents=texts,
-                config=types.EmbedContentConfig(
-                    output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'
-                ),
+                config=types.EmbedContentConfig(output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'),
             )
 
             if not response.embeddings:

@@ -30,7 +30,5 @@ class Security:
 
         to_encode.update({'exp': expire})
 
-        encoded_jwt = jwt.encode(
-            to_encode, os.getenv('SECRET_KEY'), algorithm=ALGORITHM
-        )
+        encoded_jwt = jwt.encode(to_encode, os.getenv('SECRET_KEY'), algorithm=ALGORITHM)
         return encoded_jwt

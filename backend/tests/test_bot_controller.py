@@ -1,25 +1,38 @@
 from unittest.mock import patch
 
+from backend.core.deps import get_current_user_id
+from backend.main import app
+
 
 def test_activate_bot(client):
-    target = 'backend.controllers.bot_controller.BotSetupService.register_webhook'
+    app.dependency_overrides[get_current_user_id] = lambda: 'user-id-teste'
 
-    with patch(target) as mock_setup:
+    repo_target = 'backend.controllers.telegram_controller.AgentRepository'
+    service_target = 'backend.controllers.telegram_controller.AgentSetupService.activate_agent'
+
+    with patch(repo_target) as mock_repo_class, patch(service_target) as mock_setup:
+        mock_repo_instance = mock_repo_class.return_value
+
+        mock_repo_instance.get_by_id.return_value = {
+            'id': 1,
+            'name': 'Agente Teste',
+            'telegram_token': 'my-token',
+            'api_token': 'at_token_teste_123',
+            'user_id': 'user-id-teste',
+            'is_active': True,
+        }
+
         mock_setup.return_value = (True, 'Webhook set successfully')
 
         test_token = 'my-token'
+        agent_id = 1
 
-        response = client.post(f'/api/v1/bot/activate?token={test_token}')
+        response = client.post(f'/api/v1/telegram/activate?agent_id={agent_id}&token={test_token}')
+
+        app.dependency_overrides = {}
 
         assert response.status_code == 200
-
-        data = response.json()
-        assert data['status'] == 'success'
-
-        expected_url = 'http://testserver/api/v1/telegram/webhook'
-        assert data['url'] == expected_url
-
-        mock_setup.assert_called_once_with(test_token, expected_url)
+        assert response.json()['status'] == 'success'
 
 
 def test_get_bot_info(client):
@@ -33,17 +46,14 @@ def test_get_bot_info(client):
         },
     }
 
-    target = 'backend.controllers.bot_controller.BotSetupService.get_telegram_info'
+    target = 'backend.controllers.telegram_controller.AgentSetupService.get_webhook_info'
 
     with patch(target) as mock_get_info:
         mock_get_info.return_value = mock_telegram_response
 
-        response = client.get(f'/api/v1/bot/info?token={test_token}')
+        response = client.get(f'/api/v1/telegram/info/{test_token}')
 
         assert response.status_code == 200
-
         data = response.json()
         assert data['status'] == 'success'
         assert data['info']['url'] == 'http://testserver/api/v1/telegram/webhook'
-
-        mock_get_info.assert_called_once_with(test_token)

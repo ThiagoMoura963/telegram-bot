@@ -1,3 +1,7 @@
+import { API_URL } from "./config.js";
+
+const logoutBtn = document.querySelector(".exit-btn");
+
 let currentEditingAgentId = null;
 
 let agents = [
@@ -28,8 +32,8 @@ function switchTab(tabId, event) {
     if (btn) btn.classList.add('active');
 }
 
-function createCardHTML(agent){
-    return `
+function createCardHTML(agent) {
+  return `
         <div class="agent-card" data-id="${agent.id}">
             <div class="card-header">
                 <div class="info">
@@ -39,7 +43,7 @@ function createCardHTML(agent){
             <p class="card-desc">${agent.descricao}</p>
             <div class="card-footer">
                 <button class="config-card-btn" onclick="configAgent(${agent.id})">
-                    <i class="fa-solid fa-pen"></i> Editar
+                    <i class="fa-solid fa-gear"></i> Configurar
                 </button>
             </div>
         </div>
@@ -78,24 +82,23 @@ function addAgent(){
     switchTab('tab-general-add', modal);
 
     document.getElementById('saveAdd').onclick = () => {
-
-        const uploadedFiles = [];
-        document.querySelectorAll('#fileListAdd .file-name').forEach(el => {
-            uploadedFiles.push(el.innerText);
-        });
+      const uploadedFiles = [];
+      document.querySelectorAll('#fileListAdd .file-name').forEach(el => {
+        uploadedFiles.push(el.innerText);
+      });
         
-        let agent = {
-            id: agents.length + 1, 
-            nome: document.getElementById('name').value, 
-            descricao: document.getElementById('description').value,
-            instrucao: document.getElementById('instruction').value, 
-            token: document.getElementById('tokenTelegram').value,
-            arquivos: uploadedFiles
-        };
-        
-        agents.push(agent);
-        renderAgents();
-        modal.close();
+      let agent = {
+        id: agents.length + 1, 
+        nome: document.getElementById('name').value, 
+        descricao: document.getElementById('description').value,
+        instrucao: document.getElementById('instruction').value, 
+        token: document.getElementById('tokenTelegram').value,
+        arquivos: uploadedFiles
+      };
+      
+      agents.push(agent);
+      renderAgents();
+      modal.close();
     }
 }
 
@@ -113,21 +116,21 @@ function configAgent(id){
         listConfig.innerHTML = ""; 
 
         if(agent.arquivos){
-            agent.arquivos.forEach(fileName => {
-                const li = document.createElement('li');
-                li.className = 'file-item';
-                li.innerHTML = `
-                    <i class="fa-regular fa-file-lines file-icon"></i>
-                    <div class="file-info">
-                        <div class="file-name">${fileName}</div>
-                        <div class="progress-container">
-                            <span class="percent">Concluído</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-trash remove-file" onclick="removeFileFromAgent(${agent.id}, '${fileName}', this)"></i>
-                `;
-                listConfig.appendChild(li);
-            });
+          agent.arquivos.forEach(fileName => {
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            li.innerHTML = `
+              <i class="fa-regular fa-file-lines file-icon"></i>
+              <div class="file-info">
+                <div class="file-name">${fileName}</div>
+                <div class="progress-container">
+                  <span class="percent">Concluído</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-trash remove-file" onclick="removeFileFromAgent(${agent.id}, '${fileName}', this)"></i>
+            `;
+            listConfig.appendChild(li);
+          });
         }
         
 
@@ -146,23 +149,40 @@ function configAgent(id){
 }
 
 function removeFileFromAgent(agentId, fileName, element) {
-    const agent = agents.find(a => a.id === agentId);
-    if(agent) {
-        agent.arquivos = agent.arquivos.filter(f => f !== fileName);
-        element.parentElement.remove();
-    }
+  const agent = agents.find(a => a.id === agentId);
+  if(agent) {
+      agent.arquivos = agent.arquivos.filter(f => f !== fileName);
+      element.parentElement.remove();
+  }
 }
 
-function renderAgents(){
-    const grid = document.querySelector('#gridAgents');
-    grid.innerHTML = "";
+function renderAgents() {
+  const grid = document.querySelector("#gridAgents");
+  grid.innerHTML = "";
 
-    agents.forEach(agent => {
-        const card = createCardHTML(agent);
-        grid.insertAdjacentHTML('beforeend', card);
+  agents.forEach((agent) => {
+    const card = createCardHTML(agent);
+    grid.insertAdjacentHTML("beforeend", card);
+  });
+}
+
+async function logout() {
+  try {
+    const response = await fetch(`${API_URL}/api/v1/auth/logout`, {
+      method: "POST",
+      credentials: "include",
     });
+    console.log("Botão:", logoutBtn);
+
+    if (!response.ok) throw new Error("Falha ao processar logout.");
+
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error("Erro no logout:", error);
+  }
 }
+// /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+logoutBtn.addEventListener("click", logout);
 
 renderAgents();
 closeModal();
-

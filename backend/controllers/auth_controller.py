@@ -1,9 +1,11 @@
+# type: ignore
+
 from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from backend.schemas.auth import ForgotPasswordRequest, ResetPasswordRequest
+from backend.schemas.auth import ForgotPasswordRequest, ResetPasswordRequest, VerifyCodeRequest
 from backend.schemas.user import UserCreate, UserResponse
 from backend.services.auth_service import AuthService
 from backend.services.mail_service import MailService
@@ -15,9 +17,7 @@ auth_service = AuthService()
 user_service = UserService()
 
 
-@router.post(
-    '/register', response_model=UserResponse, status_code=status.HTTP_201_CREATED
-)
+@router.post('/register', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_in: UserCreate):
     try:
         user_id = user_service.create_user(user_in)
@@ -31,9 +31,7 @@ async def register(user_in: UserCreate):
 
 
 @router.post('/login')
-async def login(
-    response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-):
+async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     result = auth_service.login(form_data.username, form_data.password)
 
     if not result:
@@ -46,21 +44,21 @@ async def login(
     token = result.get('access_token')
 
     response.set_cookie(
-        key='access_token',
-        value=token,
-        httponly=False,
-        max_age=3600,
-        samesite='none',
-        secure=True,
+        key='access_token', value=token, httponly=False, max_age=3600, samesite='lax', secure=False, path='/'
     )
 
     return {'status': 'success', 'message': 'Logado com sucesso'}
 
 
+@router.post('/logout')
+async def logout(response: Response):
+    response.delete_cookie(key='access_token', path='/', samesite='lax', secure=False)
+
+    return {'status': 'success', 'message': 'Logout feito com sucesso.'}
+
+
 @router.post('/forgot-password', status_code=status.HTTP_200_OK)
-async def forgot_password(
-    data: ForgotPasswordRequest, background_tasks: BackgroundTasks
-):
+async def forgot_password(data: ForgotPasswordRequest, background_tasks: BackgroundTasks):
     user = user_service.get_user_by_email(data.email)
 
     if user:
@@ -70,16 +68,28 @@ async def forgot_password(
 
     return {
         'status': 'success',
-        'message': (
-            'Se o e-mail estiver cadastrado, um código de 6 dígitos foi enviado.'
-        ),
+        'message': ('Se o e-mail estiver cadastrado, um código de 6 dígitos foi enviado.'),
     }
+
+
+@router.post('/verify-code')
+async def verify_password(data: VerifyCodeRequest):
+    is_valid = auth_service.validate_recovery_code(data.email, data.code, auto_delete=False)
+
+    if not is_valid:
+        print(f'[CONTROLLER DEBUG] Validação FALHOU para: {data.email}')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Código inválido ou expirado',
+        )
+
+    return {'status': 'success', 'message': 'Código validado com sucesso'}
 
 
 @router.post('/reset-password')
 async def reset_password(data: ResetPasswordRequest):
     is_valid = auth_service.validate_recovery_code(data.email, data.code)
-
+    print(is_valid)
     if not is_valid:
         print(f'[CONTROLLER DEBUG] Validação FALHOU para: {data.email}')
         raise HTTPException(
