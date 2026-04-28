@@ -8,6 +8,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/frontend/public/assets/robot-ico.png"
+    />
     <title>Gerenciador de Agentes - Home</title>
   </head>
   <body>
@@ -30,58 +35,60 @@
     </div>
 
     <dialog id="modalAgent">
-      <button 
-        type="button" 
-        class="close-x" 
-        onclick="this.closest('dialog').close()">&times;
+      <button
+        type="button"
+        class="close-x"
+        onclick="this.closest('dialog').close()"
+      >
+        &times;
       </button>
-        
-        <div class="tab-header">
-            <button 
-              type="button" 
-              class="tab-btn active" 
-              onclick="switchTab('tab-general-add', event)">Geral
-            </button>
-            <button 
-              type="button" 
-              class="tab-btn" 
-              onclick="switchTab('tab-docs-add', event)">Documentos
-            </button>
-        </div>
+
+      <div class="tab-header">
+        <button
+          type="button"
+          class="tab-btn active"
+          onclick="switchTab('tab-general-add', event)"
+        >
+          Geral
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          onclick="switchTab('tab-docs-add', event)"
+        >
+          Documentos
+        </button>
+      </div>
 
       <form method="dialog">
         <div id="tab-general-add" class="tab-content active">
           <h2>Novo Agente</h2>
 
           <label for="name">Nome do Agente:</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Ex: Atendente de Suporte"
-            required
-          />
+          <input type="text" id="name" placeholder="Ex: Atendente de Suporte" />
+          <span id="name-error" class="error-text"></span>
 
           <label for="description">Descrição:</label>
           <textarea
             id="description"
             placeholder="Descrição do Agente"
-            required
           ></textarea>
 
           <label for="intruction">Instruções:</label>
           <textarea
             id="instruction"
             placeholder="O que este agente deve fazer?"
-            required
+            rows="5"
           ></textarea>
+          <span id="instruction-error" class="error-text"></span>
 
           <label for="token">Token do Telegram:</label>
           <input
             type="text"
             id="tokenTelegram"
             placeholder="Token do Bot Father"
-            required
           />
+          <span id="tokenTelegram-error" class="error-text"></span>
           <a
             href="https://telegram.me/BotFather"
             target="_blank"
@@ -90,7 +97,7 @@
             >Não possui token?</a
           >
         </div>
-        
+
         <div id="tab-docs-add" class="tab-content">
           <div class="upload-container">
             <h2>Adicionar Documentos</h2>
@@ -98,24 +105,29 @@
 
             <div class="drop-area-box" id="dropZoneAdd">
               <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-              <p>Arraste e solte seus arquivos aqui ou 
-              <label for="docsFileAdd" class="browse-link">navegue</label>
+              <p>
+                Arraste e solte seus arquivos aqui ou
+                <label for="docsFileAdd" class="browse-link">navegue</label>
               </p>
-              <input 
-                type="file" 
-                id="docsFileAdd" 
-                hidden multiple accept=".pdf,.png,.jpg,.xls,.docx,.csv">
+              <input
+                type="file"
+                id="docsFileAdd"
+                hidden
+                multiple
+                accept=".pdf,.png,.jpg,.xls,.docx,.csv"
+              />
             </div>
 
-            <ul class="file-list" id="fileListAdd">
-              </ul>
-          </div> 
+            <ul class="file-list" id="fileListAdd"></ul>
+          </div>
         </div>
 
         <div class="modal-buttons">
           <button type="submit" id="saveAdd" class="save-btn">
-            Salvar Agente
+            <span class="btn-text">Salvar Agente</span>
+            <div class="spinner"></div>
           </button>
+
           <button type="button" id="closeModalAdd" class="cancel-btn">
             Cancelar
           </button>
@@ -124,24 +136,30 @@
     </dialog>
 
     <dialog id="modalConfig">
-      <button 
-        type="button" 
-        class="close-x" 
-        onclick="this.closest('dialog').close()">&times;
+      <button
+        type="button"
+        class="close-x"
+        onclick="this.closest('dialog').close()"
+      >
+        &times;
       </button>
 
-        <div class="tab-header">
-            <button 
-              type="button" 
-              class="tab-btn active" 
-              onclick="switchTab('tab-general-config', event)">Geral
-            </button>
-            <button 
-              type="button" 
-              class="tab-btn" 
-              onclick="switchTab('tab-docs-config', event)">Documentos
-            </button>
-        </div>
+      <div class="tab-header">
+        <button
+          type="button"
+          class="tab-btn active"
+          onclick="switchTab('tab-general-config', event)"
+        >
+          Geral
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          onclick="switchTab('tab-docs-config', event)"
+        >
+          Documentos
+        </button>
+      </div>
 
       <form method="dialog">
         <div id="tab-general-config" class="tab-content active">
@@ -176,7 +194,7 @@
           >
 
           <label class="switch">
-            <input type="checkbox" id="switchCheck">
+            <input type="checkbox" id="switchCheck" />
             <span class="slider"></span>
             <span class="text">Ativar bot</span>
           </label>
@@ -189,19 +207,21 @@
 
             <div class="drop-area-box" id="dropZoneConfig">
               <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-              <p>Arraste e solte seus arquivos aqui ou 
-              <label for="docsFileConfig" class="browse-link">navegue</label>
+              <p>
+                Arraste e solte seus arquivos aqui ou
+                <label for="docsFileConfig" class="browse-link">navegue</label>
               </p>
-              <input 
-                type="file" 
-                id="docsFileConfig" 
-                hidden multiple accept=".pdf,.png,.jpg,.xls,.docx,.csv">
+              <input
+                type="file"
+                id="docsFileConfig"
+                hidden
+                multiple
+                accept=".pdf,.png,.jpg,.xls,.docx,.csv"
+              />
             </div>
 
-            <ul class="file-list" id="docsListConfig">
-              </ul>
+            <ul class="file-list" id="docsListConfig"></ul>
           </div>
-                
         </div>
 
         <div class="modal-buttons">
@@ -216,6 +236,6 @@
     </dialog>
 
     <script type="module" src="../js/dashboard.js"></script>
-    <script src="../js/upload.js"></script>
+    <script type="module" src="../js/upload.js"></script>
   </body>
 </html>
