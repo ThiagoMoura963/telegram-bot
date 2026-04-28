@@ -55,3 +55,18 @@ class DocumentRepository:
                 return document_id
         except Exception as e:
             raise RuntimeError(f'Erro ao inserir documento: {e}') from e
+
+    def delete(self, document_id, agent_id):
+        sql = (
+            'DELETE FROM app.documents d '
+            'USING app.document_chunks dc '
+            'WHERE d.id = dc.document_id '
+            'AND d.id = %s '
+            'AND dc.agent_id = %s;'
+        )
+
+        try:
+            with self.postgres_manager as cursor:
+                cursor.execute(sql, (document_id, agent_id))
+        except Exception as e:
+            raise RuntimeError(f'Erro ao deletar documento: {e}') from e

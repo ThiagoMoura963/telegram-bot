@@ -35,3 +35,12 @@ async def upload_document(file: Annotated[UploadFile, File()]):
     chunk_repository.save_all(document_id, chunks_data)
 
     return {'id': document_id, 'file_name': file.filename}
+
+
+@router.delete('/{agent_id}/{document_id}')
+async def delete_document(agent_id: str, document_id: str, user_id: Annotated[str, Depends(get_current_user_id)]):
+
+    document_repository = DocumentRepository()
+    document_repository.delete(document_id, agent_id)
+
+    return {'message': 'Document deleted successfully.'}
