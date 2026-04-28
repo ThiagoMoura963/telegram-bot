@@ -27,11 +27,12 @@ origins = [
     'https://telegram-bot-three-vert.vercel.app',
     'http://localhost:5500',
     'http://127.0.0.1:5500',
+    'https://b27c-2804-14d-8e88-4ce0-ac7b-e59d-fef1-6cf8.ngrok-free.app',
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=['http://localhost:5500'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],

@@ -13,14 +13,17 @@ class AgentRepository:
             'id': str(row[0]),
             'name': row[1],
             'system_prompt': row[2],
-            'telegram_token': row[3],
-            'api_token': row[4],
-            'is_active': row[5],
-            'user_id': row[6],
+            'description': row[3],
+            'telegram_token': row[4],
+            'api_token': row[5],
+            'is_active': row[6],
+            'user_id': row[7],
         }
 
     def get_all(self, user_id):
-        sql = 'SELECT id, name FROM app.agents WHERE user_id = %s;'
+        sql = (
+            'SELECT id, name, description, system_prompt, telegram_token, is_active FROM app.agents WHERE user_id = %s;'
+        )
 
         try:
             with self.postgres_manager as cursor:
@@ -30,28 +33,39 @@ class AgentRepository:
                 if not rows:
                     return []
 
-                return [{'id': str(row[0]), 'name': row[1]} for row in rows]
+                return [
+                    {
+                        'id': str(row[0]),
+                        'name': row[1],
+                        'description': row[2],
+                        'system_prompt': row[3],
+                        'telegram_token': row[4],
+                        'is_active': row[5],
+                    }
+                    for row in rows
+                ]
         except Exception as e:
             raise RuntimeError(f'Erro ao buscar os agentes: {e}') from e
 
-    def save(self, name, system_prompt, telegram_token, api_token, user_id):
+    def save(self, name, system_prompt, telegram_token, api_token, user_id, description=''):
         sql = (
             'INSERT INTO app.agents '
-            '(name, system_prompt, telegram_token, api_token, user_id) VALUES (%s, %s, %s, %s, %s) '
-            'RETURNING id'
+            '(name, system_prompt, description, telegram_token, api_token, user_id) '
+            'VALUES (%s, %s, %s, %s, %s, %s) '
+            'RETURNING id, name, system_prompt, description, telegram_token, api_token, is_active, user_id;'
         )
 
         try:
             with self.postgres_manager as cursor:
-                cursor.execute(sql, (name, system_prompt, telegram_token, api_token, user_id))
+                cursor.execute(sql, (name, system_prompt, description, telegram_token, api_token, user_id))
                 row = cursor.fetchone()
-                return row[0] if row else None
+                return self._row_to_dict(row)
         except Exception as e:
             raise RuntimeError(f'Erro ao inserir agente: {e}') from e
 
     def get_by_id(self, agent_id, user_id):
         sql = (
-            'SELECT id, name, system_prompt, telegram_token, api_token, is_active, user_id '
+            'SELECT id, name, system_prompt, description, telegram_token, api_token, is_active, user_id '
             'FROM app.agents '
             'WHERE id = %s AND user_id = %s;'
         )
@@ -83,13 +97,16 @@ class AgentRepository:
             'UPDATE app.agents SET '
             'name = COALESCE(%s, name), '
             'system_prompt = COALESCE(%s, system_prompt), '
+            'description = COALESCE(%s, description), '
             'is_active = COALESCE(%s, is_active) '
-            'WHERE id = %s AND user_id = %s;'
+            'WHERE id = %s AND user_id = %s '
+            'RETURNING id, name, system_prompt, description, telegram_token, api_token, is_active, user_id;'
         )
 
         params = (
             agent_data.get('name'),
             agent_data.get('system_prompt'),
+            agent_data.get('description'),
             agent_data.get('is_active'),
             agent_id,
             user_id,
@@ -98,7 +115,8 @@ class AgentRepository:
         try:
             with self.postgres_manager as cursor:
                 cursor.execute(sql, params)
-                return cursor.rowcount > 0
+                row = cursor.fetchone()
+                return self._row_to_dict(row)
         except Exception as e:
             raise RuntimeError(f'Erro ao atualizar agente({agent_id}): {e}') from e
 
