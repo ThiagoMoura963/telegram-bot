@@ -43,26 +43,14 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
 
     token = result.get('access_token')
 
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        samesite="none",
-        secure=True,
-        path='/'
-    )
+    response.set_cookie(key='access_token', value=token, httponly=True, samesite='none', secure=True, path='/')
 
     return {'status': 'success', 'message': 'Logado com sucesso'}
 
 
 @router.post('/logout')
 async def logout(response: Response):
-    response.delete_cookie(
-        key='access_token', 
-        path='/', 
-        samesite='none', 
-        secure=True
-    )
+    response.delete_cookie(key='access_token', path='/', samesite='none', secure=True)
 
     return {'status': 'success', 'message': 'Logout feito com sucesso.'}
 

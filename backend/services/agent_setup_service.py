@@ -1,5 +1,6 @@
-import requests
 import re
+
+import requests
 
 from backend.infra.repositories.agent_repository import AgentRepository
 
@@ -42,20 +43,20 @@ class AgentSetupService:
             return response.json()
         except Exception:
             return {'ok': False, 'description': 'Could not connect to Telegram'}
-        
+
     def validate_token(self, token: str):
         token = token.strip()
-        if not re.match(r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35,}$", token):
-            return False, "Token inválido."
-        
+        if not re.match(r'^[0-9]{8,10}:[a-zA-Z0-9_-]{35,}$', token):
+            return False, 'Token inválido.'
+
         try:
             response = requests.get(f'https://api.telegram.org/bot{token}/getMe', timeout=10)
             if response.status_code == 200:
                 return True, response.json()['result']
-            
+
             return False, 'Token inválido ou revogado pelo BotFather.'
         except Exception:
-            return False, "Serviço do telegram indisponível."
+            return False, 'Serviço do telegram indisponível.'
 
     def _register_webhook(self, token, webhook_url):
         endpoint = f'{self.api_base_url}{token}/setWebhook'
@@ -84,4 +85,3 @@ class AgentSetupService:
             return False, result.get('description', 'Failed to delete webhook.')
         except Exception as e:
             return False, f'Connection error: {str(e)}'
-        

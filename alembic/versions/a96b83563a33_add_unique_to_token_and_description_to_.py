@@ -5,10 +5,10 @@ Revises: 2ce84d3d9c85
 Create Date: 2026-04-27 22:44:50.678195
 
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
@@ -29,4 +29,3 @@ def downgrade() -> None:
     """Downgrade schema."""
     op.drop_constraint('uq_agents_telegram_token', 'agents', schema='app', type_='unique')
     op.drop_column('agents', 'description', schema='app')
-

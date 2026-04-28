@@ -28,14 +28,13 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
     try:
         agent_data = await request.json()
         agent_data['api_token'] = f'at_{secrets.token_urlsafe(32)}'
-        
+
         agent_setup_service = AgentSetupService(agent_repository)
 
         is_valid, _ = agent_setup_service.validate_token(agent_data['telegram_token'])
         if not is_valid:
             raise HTTPException(
-                status_code=400, 
-                detail={"field": "tokenTelegram", "message": "Token inválido ou revogado."}
+                status_code=400, detail={'field': 'tokenTelegram', 'message': 'Token inválido ou revogado.'}
             )
 
         new_agent = agent_repository.save(**agent_data, user_id=user_id)
@@ -50,11 +49,10 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
         if not success:
             agent_repository.delete(new_agent['id'], user_id)
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f'Falha ao ativar no Telegram: {message}'
+                status_code=status.HTTP_400_BAD_REQUEST, detail=f'Falha ao ativar no Telegram: {message}'
             )
 
-        return new_agent 
+        return new_agent
 
     except HTTPException as http_e:
         raise http_e
@@ -63,9 +61,9 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
             agent_repository.delete(new_agent['id'], user_id)
 
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f'Erro interno do servidor: {e}'
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'Erro interno do servidor: {e}'
         ) from e
+
 
 @router.put('/{agent_id}')
 async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
@@ -84,8 +82,7 @@ async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depen
         is_valid, _ = setup_agent_service.validate_token(new_token)
         if not is_valid:
             raise HTTPException(
-                status_code=400, 
-                detail={"field": "tokenTelegramConfig", "message": "Token inválido ou revogado."}
+                status_code=400, detail={'field': 'tokenTelegramConfig', 'message': 'Token inválido ou revogado.'}
             )
 
     new_active_status = agent_data.get('is_active')
@@ -111,7 +108,7 @@ async def delete_agent(agent_id, user_id: Annotated[str, Depends(get_current_use
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Agent not found')
 
     agent_setup_service = AgentSetupService(agent_repository)
-    
+
     agent_setup_service.deactivate_agent(agent_id, agent['telegram_token'], user_id)
 
     has_deleted = agent_repository.delete(agent_id, user_id)
