@@ -1,35 +1,39 @@
-# type: ignore
-
-import os
-
-from dotenv import load_dotenv
-from fastapi import Depends, HTTPException, status
+# type: ignore 
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+from typing import Optional
+from fastapi import Request, Depends, HTTPException, status
+import os
+from jose import jwt, JWTError
 
-from backend.core.security import ALGORITHM
+class OAuth2PasswordBearerCookie(OAuth2PasswordBearer):
+    async def __call__(self, request: Request) -> Optional[str]:
+        header_auth = request.headers.get("Authorization")
+        if header_auth and header_auth.startswith("Bearer "):
+            return header_auth.replace("Bearer ", "")
+        
+        print('REQUEST:', request.__dict__)
+        print('COOKIES:', request.cookies)
+        return request.cookies.get("access_token")
 
-load_dotenv()
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/auth/login')
-
+oauth2_scheme = OAuth2PasswordBearerCookie(tokenUrl='/api/v1/auth/login')
 
 async def get_current_user_id(token: str = Depends(oauth2_scheme)) -> int:
+    print('DEBUG - Token capturado:', token[:15] if token else "Nenhum")
+    print('TOKEN:', token)
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Não foi possível validar as credenciais',
         headers={'WWW-Authenticate': 'Bearer'},
     )
 
+    if not token:
+        raise credentials_exception
+
     try:
-        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=[ALGORITHM])
-
+        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=["HS256"])
         user_id: str = payload.get('sub')
-
         if user_id is None:
             raise credentials_exception
-
         return user_id
-
-    except (JWTError, ValueError) as e:
-        raise credentials_exception from e
+    except (JWTError, ValueError):
+        raise credentials_exception
