@@ -73,8 +73,9 @@
             id="description"
             placeholder="Descrição do Agente"
           ></textarea>
+          <span id="description-error" class="error-text"></span>
 
-          <label for="intruction">Instruções:</label>
+          <label for="instruction">Instruções:</label>
           <textarea
             id="instruction"
             placeholder="O que este agente deve fazer?"
@@ -82,7 +83,7 @@
           ></textarea>
           <span id="instruction-error" class="error-text"></span>
 
-          <label for="token">Token do Telegram:</label>
+          <label for="tokenTelegram">Token do Telegram:</label>
           <input
             type="text"
             id="tokenTelegram"
@@ -165,26 +166,31 @@
         <div id="tab-general-config" class="tab-content active">
           <h2>Configurar agente</h2>
 
-          <label for="name">Nome do Agente:</label>
+          <label for="nameConfig">Nome do Agente:</label>
           <input type="text" id="nameConfig" value="" required />
+          <span id="nameConfig-error" class="error-text"></span>
 
-          <label for="description">Descrição:</label>
+          <label for="descriptionConfig">Descrição:</label>
           <textarea
             id="descriptionConfig"
             placeholder="Descrição do Agente"
             required
           ></textarea>
+          <span id="descriptionConfig-error" class="error-text"></span>
 
-          <label for="intruction">Instruções:</label>
+          <label for="instructionConfig">Instruções:</label>
           <textarea id="instructionConfig" required></textarea>
+          <span id="instructionConfig-error" class="error-text"></span>
 
-          <label for="token">Token do Telegram:</label>
+          <label for="tokenTelegramConfig">Token do Telegram:</label>
           <input
             type="text"
             id="tokenTelegramConfig"
             placeholder="Token do Bot Father"
             required
           />
+          <span id="tokenTelegramConfig-error" class="error-text"></span>
+
           <a
             href="https://telegram.me/BotFather"
             target="_blank"
@@ -226,7 +232,8 @@
 
         <div class="modal-buttons">
           <button type="submit" id="saveConfig" class="save-btn">
-            Salvar Agente
+            <span class="btn-text">Salvar Alterações</span>
+            <div class="spinner"></div>
           </button>
           <button type="button" id="closeModalConfig" class="cancel-btn">
             Cancelar
