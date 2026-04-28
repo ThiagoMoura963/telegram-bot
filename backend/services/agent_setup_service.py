@@ -1,4 +1,5 @@
 import requests
+import re
 
 from backend.infra.repositories.agent_repository import AgentRepository
 
@@ -41,6 +42,20 @@ class AgentSetupService:
             return response.json()
         except Exception:
             return {'ok': False, 'description': 'Could not connect to Telegram'}
+        
+    def validate_token(self, token: str):
+        token = token.strip()
+        if not re.match(r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35,}$", token):
+            return False, "Token inválido."
+        
+        try:
+            response = requests.get(f'https://api.telegram.org/bot{token}/getMe', timeout=10)
+            if response.status_code == 200:
+                return True, response.json()['result']
+            
+            return False, 'Token inválido ou revogado pelo BotFather.'
+        except Exception:
+            return False, "Serviço do telegram indisponível."
 
     def _register_webhook(self, token, webhook_url):
         endpoint = f'{self.api_base_url}{token}/setWebhook'
@@ -69,48 +84,4 @@ class AgentSetupService:
             return False, result.get('description', 'Failed to delete webhook.')
         except Exception as e:
             return False, f'Connection error: {str(e)}'
-
-    # def register_webhook(self, token: str, webhook_url: str):
-    #     endpoint = f'{self.api_base_url}{token}/setWebhook'
-    #     try:
-    #         response = requests.post(endpoint, data={'url': webhook_url}, timeout=10)
-
-    #         result = response.json()
-
-    #         if result.get('ok'):
-    #             print('[SETUP] Webhook configurada com sucesso.')
-    #             return True, result.get('description', 'Webhook configured')
-    #         else:
-    #             error_message = result.get(
-    #                 'description', 'Unknown error from Telegram API.'
-    #             )
-    #             print(f'[SETUP] Falha ao configurar o Webhook: {error_message}')
-    #             return False, error_message
-    #     except Exception as e:
-    #         error_details = f'Connection error: {str(e)}'
-    #         print(f'[SETUP] Erro crítico: {error_details}')
-    #         return False, error_details
-
-    # def get_telegram_info(self, token: str):
-    #     endpoint = f'{self.api_base_url}{token}/getWebhookInfo'
-    #     response = requests.get(endpoint)
-    #     return response.json()
-
-    # def delete_webook(self, token: str):
-    #     endpoint = f'{self.api_base_url}{token}/deleteWebhook'
-
-    #     try:
-    #         response = requests.post(endpoint, timeout=10)
-    #         result = response.json()
-
-    #         if result.get('ok'):
-    #             print('[DELETE] Webhook deletado com sucesso.')
-    #             return True, result.get('description', 'Webhook deleted.')
-    #         else:
-    #             error_message = result('description', 'Failed to delete webhook.')
-    #             print(f'[DELETE] Erro crítico: {error_message}')
-    #             return False, error_message
-    #     except Exception as e:
-    #         error_details = f'Connection error: {str(e)}'
-    #         print(f'[DELETE] Erro crítico: {error_details}')
-    #         return False, error_details
+        

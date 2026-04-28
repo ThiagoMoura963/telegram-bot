@@ -18,45 +18,55 @@ def get_agents(user_id: Annotated[str, Depends(get_current_user_id)]):
     agent_repository = AgentRepository()
     agents = agent_repository.get_all(user_id)
 
-    if not agents:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Agents not found.')
-
-    return [{'id': agent['id'], 'name': agent['name']} for agent in agents]
+    return {'agents': agents}
 
 
 @router.post('')
 async def create_agent(request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
+    agent_repository = AgentRepository()
+
     try:
         agent_data = await request.json()
 
         agent_data['api_token'] = f'at_{secrets.token_urlsafe(32)}'
-
-        agent_repository = AgentRepository()
+        
         agent_setup_service = AgentSetupService(agent_repository)
 
-        new_agent_id = agent_repository.save(**agent_data, user_id=user_id)
+        is_valid, bot_info = agent_setup_service.validate_token(agent_data['telegram_token'])
+        if not is_valid:
+            raise HTTPException(
+                status_code=400, 
+                detail={"field": "tokenTelegram", "message": "Token inválido ou revogado."}
+            )
+
+        new_agent = agent_repository.save(**agent_data, user_id=user_id)
 
         base_url = str(request.base_url).rstrip('/')
         webhook_url = f'{base_url}/api/v1/telegram/webhook/{agent_data["api_token"]}'
 
         success, message = agent_setup_service.activate_agent(
-            new_agent_id, agent_data['telegram_token'], webhook_url, user_id
+            new_agent['id'], agent_data['telegram_token'], webhook_url, user_id
         )
 
         if not success:
-            agent_repository.delete(new_agent_id, user_id)
+            agent_repository.delete(new_agent['id'], user_id)
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=f'Falha ao ativar no Telegram: {message}'
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f'Falha ao ativar no Telegram: {message}'
             )
 
-        return {'status': 'success', 'id': new_agent_id}
+        return new_agent 
+
+    except HTTPException as http_e:
+        raise http_e
     except Exception as e:
-        agent_repository.delete(new_agent_id, user_id)
+        if 'new_agent' in locals() and new_agent:
+            agent_repository.delete(new_agent['id'], user_id)
 
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Erro interno do servidor.'
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f'Erro interno do servidor: {e}'
         ) from e
-
 
 @router.put('/{agent_id}')
 async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
