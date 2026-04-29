@@ -24,7 +24,6 @@
   font-family: "Alan Sans", sans-serif;
 }
 
-/* --- Layout Base --- */
 body {
   background-color: #fafafa;
 }
@@ -95,11 +94,6 @@ body {
   font-weight: bold;
 }
 
-.create-agent-btn:hover {
-  background: #444;
-}
-
-/* --- Grid de Agentes --- */
 .agents-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -117,7 +111,6 @@ body {
   padding: 50px;
 }
 
-/* --- Cards --- */
 .agent-card {
   background: #fff;
   border: 1px solid #eee;
@@ -134,12 +127,6 @@ body {
   transform: translateY(-4px);
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .card-desc {
   text-align: left;
   line-height: 1.5;
@@ -153,7 +140,6 @@ body {
   -webkit-box-orient: vertical;
 }
 
-/* NOVO: Footer do Card para alinhar botões */
 .card-footer {
   margin-top: auto;
   display: flex;
@@ -180,10 +166,6 @@ body {
   color: #333;
 }
 
-.config-card-btn:hover {
-  background: #f0f0f0;
-}
-
 .delete-card-btn {
   border: 1px solid #ff4d4d;
   background: #fff;
@@ -195,7 +177,6 @@ body {
   color: #fff;
 }
 
-/* --- Modais (Dialog) --- */
 dialog {
   border: none;
   border-radius: 15px;
@@ -219,10 +200,8 @@ dialog::backdrop {
   font-size: 24px;
   color: #999;
   cursor: pointer;
-  z-index: 10;
 }
 
-/* --- Tabs --- */
 .tab-header {
   display: flex;
   gap: 10px;
@@ -256,7 +235,103 @@ dialog::backdrop {
   animation: fadeEffect 0.4s ease-in-out;
 }
 
-/* --- Formulários --- */
+.upload-container {
+  text-align: center;
+  padding: 10px;
+}
+
+.upload-icon {
+  font-size: 40px;
+  color: #4a90e2;
+  margin-bottom: 10px;
+}
+
+.drop-area-box {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 20px;
+  background-color: #f9fafb;
+  transition: 0.3s;
+}
+
+.drop-area-box.drag-over {
+  border-color: #4a90e2;
+  background-color: #ebf5ff;
+}
+
+.browse-link {
+  color: #4a90e2;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.file-list {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.file-info {
+  flex: 1;
+  text-align: left;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4a90e2;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.percent {
+  font-size: 12px;
+  color: #666;
+  width: 35px;
+}
+
+.remove-file {
+  cursor: pointer;
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.remove-file:hover {
+  color: #ff4d4d;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -279,7 +354,6 @@ textarea {
   width: 100%;
 }
 
-/* --- Validação --- */
 .error-text {
   color: #ff4d4d;
   font-size: 12px;
@@ -292,7 +366,6 @@ textarea {
   background-color: #fff9f9;
 }
 
-/* --- Botões do Modal --- */
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
@@ -315,16 +388,6 @@ textarea {
   min-width: 140px;
 }
 
-.cancel-btn {
-  background-color: #eee;
-  color: #333;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 25px;
-  cursor: pointer;
-}
-
-/* --- Feedback de Loading (Spinner) --- */
 .spinner {
   display: none;
   width: 18px;
@@ -339,11 +402,6 @@ textarea {
   display: block;
 }
 
-.loading .btn-text {
-  opacity: 0.7;
-}
-
-/* --- Switch (Ativar Bot) --- */
 .switch {
   display: flex;
   align-items: center;
@@ -383,4 +441,21 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  color: #000000;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  height: 42px;
+}
+
+.cancel-btn:hover {
+  color: #ffffff;
+
+  background-color: #636363;
 }
