@@ -2,9 +2,16 @@ class ChatService:
     def __init__(self, provider):
         self.provider = provider
 
-    def get_answer(self, message, system_instruction):
+    def get_answer(
+        self,
+        message,
+        system_instruction,
+        history: list[dict] | None = None,
+    ):
         try:
-            return self.provider.generate_text(message, system_instruction)
+            return self.provider.generate_text(
+                prompt=message, system_instruction=system_instruction, history=history or []
+            )
         except Exception as e:
             raise RuntimeError(f'ChatService falhou ao gerar resposta: {e}') from e
 
