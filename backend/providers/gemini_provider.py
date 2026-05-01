@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from google.genai import Client, types
 
 load_dotenv('.env.development')
+print('CHAVE DO GEMINI:', os.getenv('GEMINI_API_KEY'))
 
 
 class GeminiProvider:
@@ -15,7 +16,7 @@ class GeminiProvider:
     def generate_text(self, prompt: str, system_instruction: str) -> str:
         try:
             response = self.client.models.generate_content(
-                model='gemini-3-flash-preview',
+                model='gemini-3.1-flash-lite-preview',
                 contents=prompt,
                 config=types.GenerateContentConfig(system_instruction=system_instruction),
             )
