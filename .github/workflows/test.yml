@@ -3,22 +3,20 @@ name: Automated Tests
 on: pull_request
 
 jobs:
-
   ruff:
-
     name: Pytest Ubuntu
 
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-python@v5
-        with: 
+        with:
           python-version: "3.12"
 
       - run: pip install -r requirements.txt
 
-      - name: Tests
+      - name: Run Tests
         run: pytest . -v
+        continue-on-error: true

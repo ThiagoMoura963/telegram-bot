@@ -1,5 +1,6 @@
 import telebot
 from telebot import types
+from telegramify_markdown import markdownify
 
 from backend.infra.repositories.agent_repository import AgentRepository
 from backend.infra.repositories.chunks_repository import ChunksRepository
@@ -52,4 +53,6 @@ class TelegramProvider:
             system_instruction=agent['system_prompt'],
         )
 
-        bot.send_message(chat_id, answer)
+        formatted_answer = markdownify(answer)
+
+        bot.send_message(chat_id, formatted_answer, parse_mode='MarkdownV2')

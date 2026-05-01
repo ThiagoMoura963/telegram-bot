@@ -80,7 +80,7 @@ class AgentRepository:
 
     def get_by_api_token(self, api_token):
         sql = (
-            'SELECT id, name, system_prompt, telegram_token, api_token, is_active, user_id '
+            'SELECT id, name, system_prompt, description, telegram_token, api_token, is_active, user_id '
             'FROM app.agents '
             'WHERE api_token = %s;'
         )
