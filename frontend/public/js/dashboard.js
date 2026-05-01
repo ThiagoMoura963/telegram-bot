@@ -2,8 +2,17 @@ import { API_URL } from "./config.js";
 import { agentValidator } from "./validators/agentValidator.js";
 
 const logoutBtn = document.querySelector(".exit-btn");
-let currentEditingAgentId = null;
-let agents = [];
+export let currentEditingAgentId = null;
+export let agents = [];
+let pendingFiles = [];
+
+export function setCurrentEditingAgentId(id) {
+  currentEditingAgentId = id;
+}
+
+export function addPendingFiles(files) {
+  pendingFiles = [...pendingFiles, ...files];
+}
 
 function cleanErrors(container = document) {
   container.querySelectorAll(".error-text").forEach((el) => {
@@ -91,12 +100,65 @@ function closeModal() {
   });
 }
 
+function setupPendingFiles() {
+  const input = document.getElementById("docsFileAdd");
+
+  if (!input) return;
+
+  input.addEventListener("change", (e) => {
+    pendingFiles = [...e.target.files];
+    renderPendingFiles();
+  });
+}
+
+function renderPendingFiles() {
+  const list = document.getElementById("fileListAdd");
+  list.innerHTML = "";
+
+  pendingFiles.forEach((file, index) => {
+    list.insertAdjacentHTML(
+      "beforeend",
+      `
+      <li class="file-item">
+        <span>${file.name}</span>
+      </li>
+      `,
+    );
+  });
+}
+
+async function uploadPendingFiles(agentId) {
+  if (!pendingFiles.length) return;
+
+  const formData = new FormData();
+
+  formData.append("agent_id", agentId);
+
+  pendingFiles.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  const response = await fetch(`${API_URL}/api/v1/document/upload`, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao enviar documents");
+
+    pendingFiles = [];
+  }
+}
+
 function addAgent() {
   const modal = document.getElementById("modalAgent");
   const form = modal.querySelector("form");
   const saveBtn = document.getElementById("saveAdd");
 
   form.reset();
+  form.reset();
+  pendingFiles = [];
   cleanErrors(modal);
   document.getElementById("fileListAdd").innerHTML = "";
 
@@ -145,6 +207,8 @@ function addAgent() {
         }
         throw new Error(result.detail || "Erro ao salvar agente");
       }
+
+      await uploadPendingFiles(result.id);
 
       agents.push(result);
       renderAgents();
@@ -195,6 +259,8 @@ function configAgent(id) {
     }
 
     currentEditingAgentId = id;
+    setCurrentEditingAgentId(id);
+
     const saveBtn = document.getElementById("saveConfig");
 
     saveBtn.onclick = async (e) => {
@@ -346,5 +412,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   } catch (error) {
     console.error("Erro inicial:", error);
   }
+
+  setupPendingFiles();
   closeModal();
 });
