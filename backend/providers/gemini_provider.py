@@ -4,14 +4,11 @@ from dotenv import load_dotenv
 from google.genai import Client, types
 
 load_dotenv('.env.development')
-print('CHAVE DO GEMINI:', os.getenv('GEMINI_API_KEY'))
 
 
 class GeminiProvider:
     def __init__(self):
         self.client = Client(api_key=os.getenv('GEMINI_API_KEY'))
-
-        print(os.getenv('GEMINI_API_KEY'))
 
     def generate_text(self, prompt: str, system_instruction: str) -> str:
         try:
@@ -43,18 +40,25 @@ class GeminiProvider:
         except Exception as e:
             raise RuntimeError(f'Falha ao gerar o vetor da consulta: {e}') from e
 
-    def generate_embeddings(self, texts):
+    def generate_embeddings(self, texts, batch_size=100):
+        all_embeddings = []
         try:
-            response = self.client.models.embed_content(
-                model='gemini-embedding-2-preview',
-                contents=texts,
-                config=types.EmbedContentConfig(output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'),
-            )
+            for i in range(0, len(texts), batch_size):
+                batch = texts[i : i + batch_size]
 
-            if not response.embeddings:
-                msg = 'Nenhum vetor foi retornado para o lote de documentos.'
-                raise ValueError(msg)
+                response = self.client.models.embed_content(
+                    model='gemini-embedding-2-preview',
+                    contents=batch,
+                    config=types.EmbedContentConfig(output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'),
+                )
 
-            return [emb.values for emb in response.embeddings]
+                if not response.embeddings:
+                    msg = 'Nenhum vetor foi retornado para o lote de documentos.'
+                    raise ValueError(msg)
+
+                batch_vectors = [emb.values for emb in response.embeddings]
+                all_embeddings.extend(batch_vectors)
+
+            return all_embeddings
         except Exception as e:
             raise RuntimeError(f'Falha ao gerar os vetores: {e}') from e
