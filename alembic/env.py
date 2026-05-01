@@ -4,6 +4,7 @@ from logging.config import fileConfig
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
+import backend.models.message  # noqa: F401
 from alembic import context
 from backend.schemas.base import Base
 
@@ -74,6 +75,8 @@ def run_migrations_online() -> None:
 
         connection.execute(text('CREATE SCHEMA IF NOT EXISTS app'))
         connection.commit()
+
+        # connection.execute(text('SET search_path TO app, public'))
 
         context.configure(
             connection=connection,

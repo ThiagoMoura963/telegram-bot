@@ -25,8 +25,8 @@ def upgrade() -> None:
     """Upgrade schema."""
 
     # extensões necessárias
-    op.execute('CREATE EXTENSION IF NOT EXISTS pgcrypto')
-    op.execute('CREATE EXTENSION IF NOT EXISTS vector')
+    op.execute('CREATE EXTENSION IF NOT EXISTS "pgcrypto" SCHEMA public')
+    op.execute('CREATE EXTENSION IF NOT EXISTS "vector" SCHEMA public')
 
     # schema
     op.execute('CREATE SCHEMA IF NOT EXISTS app')

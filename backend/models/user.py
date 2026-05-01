@@ -14,6 +14,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     agents = relationship('Agent', back_populates='owner')
+    messages = relationship('Message', back_populates='user')
 
 
 class Agent(Base):
@@ -26,4 +27,5 @@ class Agent(Base):
     instruction = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey('app.users.id'))
 
+    messages = relationship('Message', back_populates='agent')
     owner = relationship('User', back_populates='agents')
