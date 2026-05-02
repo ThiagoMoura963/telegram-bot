@@ -61,6 +61,7 @@ pydantic-extra-types==2.11.1
 pydantic-settings==2.13.1
 pydantic_core==2.41.5
 Pygments==2.19.2
+pyngrok==8.0.0
 pypdf==6.8.0
 PyPDF2==3.0.1
 pyromark==0.9.10

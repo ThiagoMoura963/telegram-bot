@@ -21,11 +21,23 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    op.add_column('agents', sa.Column('description', sa.Text()), schema='app')
-    op.create_unique_constraint('uq_agents_telegram_token', 'agents', ['telegram_token'], schema='app')
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [col['name'] for col in inspector.get_columns('agents', schema='app')]
+
+    if 'description' not in columns:
+        op.add_column('agents', sa.Column('description', sa.Text()), schema='app')
+
+    if 'telegram_token' not in columns:
+        op.add_column('agents', sa.Column('telegram_token', sa.Text()), schema='app')
+
+    constraints = [c['name'] for c in inspector.get_unique_constraints('agents', schema='app')]
+    if 'uq_agents_telegram_token' not in constraints:
+        op.create_unique_constraint('uq_agents_telegram_token', 'agents', ['telegram_token'], schema='app')
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     op.drop_constraint('uq_agents_telegram_token', 'agents', schema='app', type_='unique')
+    op.drop_column('agents', 'telegram_token', schema='app')
     op.drop_column('agents', 'description', schema='app')

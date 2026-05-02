@@ -4,7 +4,7 @@
  * @param {string} fileListId
  */
 
-import { currentEditingAgentId, agents, addPendingFiles } from "./dashboard.js";
+import { currentEditingAgentId, agents, addPendingFiles, renderPendingFiles } from "./dashboard.js";
 
 function initUploadBehavior(dropZoneId, fileInputId, fileListId) {
   const dropZone = document.getElementById(dropZoneId);
@@ -47,41 +47,37 @@ function handleFiles(files, listElement) {
 
   if (listElement.id === "fileListAdd") {
     addPendingFiles(filesArray);
+    renderPendingFiles();
+  }
+  else{
+    renderConfigFiles(filesArray, listElement)
   }
 
-  filesArray.forEach((file) => {
-    const fileId = "file-" + Math.random().toString(36).substr(2, 9);
+  const inputId = listElement.id === "fileListAdd" ? "docsFileAdd" : "docsFileConfig";
+  const input = document.getElementById(inputId);
+  if (input) input.value = "";
+}
 
+function renderConfigFiles(filesArray, listElement) {
+  filesArray.forEach(file => {
     const li = document.createElement("li");
     li.className = "file-item";
-
     li.innerHTML = `
-      <i class="fa-regular fa-file-lines file-icon-list"></i>
+      <li class="file-item">
+        <i class="fa-regular fa-file-lines file-icon-list"></i>
 
-      <div class="file-info">
-        <div class="file-name">${file.name}</div>
-
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" id="fill-${fileId}"></div>
-          </div>
-
-          <span class="percent" id="perc-${fileId}">
-            0%
-          </span>
+        <div class="file-info">
+          <div class="file-name">${file.name}</div>
         </div>
-      </div>
 
-      <i class="fa-solid fa-xmark remove-file"
-         onclick="this.parentElement.remove()">
-      </i>
+        <i class="fa-solid fa-xmark remove-file"
+          onclick="removePendingFile('${file.name}', this)">
+        </i>
+      </li>
     `;
 
     listElement.appendChild(li);
 
-    simulateProgress(fileId);
-
-    // arquivos do modal config
     if (currentEditingAgentId) {
       const agent = agents.find((a) => a.id === currentEditingAgentId);
 
@@ -96,32 +92,6 @@ function handleFiles(files, listElement) {
       }
     }
   });
-
-  const inputId =
-    listElement.id === "fileListAdd" ? "docsFileAdd" : "docsFileConfig";
-
-  setTimeout(() => {
-    document.getElementById(inputId).value = "";
-  }, 200);
-}
-
-function simulateProgress(fileId) {
-  let progress = 0;
-
-  const fill = document.getElementById(`fill-${fileId}`);
-  const perc = document.getElementById(`perc-${fileId}`);
-
-  const interval = setInterval(() => {
-    progress += Math.floor(Math.random() * 15) + 5;
-
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
-    }
-
-    if (fill) fill.style.width = progress + "%";
-    if (perc) perc.innerText = progress + "%";
-  }, 200);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
