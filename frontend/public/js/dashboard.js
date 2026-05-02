@@ -106,13 +106,14 @@ function setupPendingFiles() {
   if (!input) return;
 
   input.addEventListener("change", (e) => {
-    pendingFiles = [...e.target.files];
-    renderPendingFiles();
+    addPendingFiles(Array.from(e.target.files));
+    e.target.value = "";
   });
 }
 
-function renderPendingFiles() {
+export function renderPendingFiles() {
   const list = document.getElementById("fileListAdd");
+  if (!list) return;
   list.innerHTML = "";
 
   pendingFiles.forEach((file, index) => {
@@ -120,12 +121,28 @@ function renderPendingFiles() {
       "beforeend",
       `
       <li class="file-item">
-        <span>${file.name}</span>
+        <i class="fa-regular fa-file-lines file-icon-list"></i>
+
+        <div class="file-info">
+          <div class="file-name">${file.name}</div>
+        </div>
+
+        <i class="fa-solid fa-xmark remove-file"
+          onclick="removePendingFile('${file.name}', this)">
+        </i>
       </li>
-      `,
+      `
     );
   });
 }
+
+window.removePendingFile = function(fileName, btn) {
+  pendingFiles = pendingFiles.filter(f => f.name !== fileName);
+  
+const itemVisual = btn.closest('.file-item');
+    
+    if (itemVisual) itemVisual.remove();
+};
 
 async function uploadPendingFiles(agentId) {
   if (!pendingFiles.length) return;
