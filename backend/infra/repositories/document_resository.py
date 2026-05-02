@@ -36,12 +36,12 @@ class DocumentRepository:
         except Exception as e:
             raise RuntimeError(f'Erro ao buscar documentos: {e}') from e
 
-    def save(self, file_name):
-        sql = 'INSERT INTO app.documents (file_name) VALUES (%s) RETURNING id;'
+    def save(self, file_name, agent_id):
+        sql = 'INSERT INTO app.documents (file_name, agent_id) VALUES (%s, %s) RETURNING id;'
 
         try:
             with self.postgres_manager as cursor:
-                cursor.execute(sql, (file_name,))
+                cursor.execute(sql, (file_name, agent_id))
                 row = cursor.fetchone()
 
                 if row is None:
@@ -57,16 +57,12 @@ class DocumentRepository:
             raise RuntimeError(f'Erro ao inserir documento: {e}') from e
 
     def delete(self, document_id, agent_id):
-        sql = (
-            'DELETE FROM app.documents d '
-            'USING app.document_chunks dc '
-            'WHERE d.id = dc.document_id '
-            'AND d.id = %s '
-            'AND dc.agent_id = %s;'
-        )
+        sql_chunks = 'DELETE FROM app.document_chunks WHERE document_id = %s AND agent_id = %s;'
+        sql_doc = 'DELETE FROM app.documents WHERE id = %s;'
 
         try:
             with self.postgres_manager as cursor:
-                cursor.execute(sql, (document_id, agent_id))
+                cursor.execute(sql_chunks, (document_id, agent_id))
+                cursor.execute(sql_doc, (document_id,))
         except Exception as e:
             raise RuntimeError(f'Erro ao deletar documento: {e}') from e

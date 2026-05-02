@@ -1,6 +1,7 @@
 # type: ignore
 
 import secrets
+import os
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
@@ -39,8 +40,9 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
 
         new_agent = agent_repository.save(**agent_data, user_id=user_id)
 
-        base_url = str(request.base_url).rstrip('/')
+        base_url = os.getenv('WEBHOOK_BASE_URL') or str(request.base_url).rstrip('/')
         webhook_url = f'{base_url}/api/v1/telegram/webhook/{agent_data["api_token"]}'
+        print(f'DEBUG WEBHOOK URL: {webhook_url}')
 
         success, message = agent_setup_service.activate_agent(
             new_agent['id'], agent_data['telegram_token'], webhook_url, user_id
