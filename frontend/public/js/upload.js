@@ -50,7 +50,8 @@ function handleFiles(files, listElement) {
     renderPendingFiles();
   }
   else{
-    renderConfigFiles(filesArray, listElement)
+    addPendingFiles(filesArray)
+    renderConfigFiles(filesArray, listElement);
   }
 
   const inputId = listElement.id === "fileListAdd" ? "docsFileAdd" : "docsFileConfig";
@@ -60,10 +61,9 @@ function handleFiles(files, listElement) {
 
 function renderConfigFiles(filesArray, listElement) {
   filesArray.forEach(file => {
-    const li = document.createElement("li");
-    li.className = "file-item";
-    li.innerHTML = `
-      <li class="file-item">
+    listElement.insertAdjacentHTML(
+      "beforeend",
+      `<li class="file-item">
         <i class="fa-regular fa-file-lines file-icon-list"></i>
 
         <div class="file-info">
@@ -73,24 +73,8 @@ function renderConfigFiles(filesArray, listElement) {
         <i class="fa-solid fa-xmark remove-file"
           onclick="removePendingFile('${file.name}', this)">
         </i>
-      </li>
-    `;
-
-    listElement.appendChild(li);
-
-    if (currentEditingAgentId) {
-      const agent = agents.find((a) => a.id === currentEditingAgentId);
-
-      if (agent) {
-        if (!agent.arquivos) {
-          agent.arquivos = [];
-        }
-
-        if (!agent.arquivos.includes(file.name)) {
-          agent.arquivos.push(file.name);
-        }
-      }
-    }
+      </li>`
+    );
   });
 }
 
