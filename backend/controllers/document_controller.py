@@ -28,6 +28,7 @@ async def upload_document(
     agent_id: Annotated[str, Form()],
     user_id: Annotated[str, Depends(get_current_user_id)],
 ):
+    print(f'DEBUG upload - agent_id: {agent_id}, files: {[f.filename for f in files]}')
     uploaded_documents = []
 
     document_repository = DocumentRepository()
@@ -42,7 +43,7 @@ async def upload_document(
 
         chunks_data = document_service.process(content)
 
-        document_id = document_repository.save(file.filename)
+        document_id = document_repository.save(file.filename, agent_id)
 
         chunk_repository.save_all(document_id=document_id, chunks_data=chunks_data, user_id=user_id, agent_id=agent_id)
 

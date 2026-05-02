@@ -5,6 +5,7 @@ const logoutBtn = document.querySelector(".exit-btn");
 export let currentEditingAgentId = null;
 export let agents = [];
 let pendingFiles = [];
+let pendingDeletes = [];
 
 export function setCurrentEditingAgentId(id) {
   currentEditingAgentId = id;
@@ -163,9 +164,8 @@ async function uploadPendingFiles(agentId) {
 
   if (!response.ok) {
     throw new Error("Erro ao enviar documents");
-
-    pendingFiles = [];
   }
+  pendingFiles = [];
 }
 
 function addAgent() {
@@ -240,11 +240,13 @@ function addAgent() {
   };
 }
 
-function configAgent(id) {
+async function configAgent(id) {
   const agent = agents.find((a) => a.id === id);
   const modal = document.getElementById("modalConfig");
 
   if (agent) {
+    pendingFiles = [];
+    pendingDeletes = [];
     cleanErrors(modal);
 
     document.getElementById("nameConfig").value = agent.name || "";
@@ -257,22 +259,36 @@ function configAgent(id) {
     document.getElementById("switchCheck").checked = !!agent.is_active;
 
     const listConfig = document.getElementById("docsListConfig");
-    listConfig.innerHTML = "";
-    if (agent.arquivos) {
-      agent.arquivos.forEach((fileName) => {
-        listConfig.insertAdjacentHTML(
-          "beforeend",
-          `
-                    <li class="file-item">
-                        <i class="fa-regular fa-file-lines file-icon"></i>
-                        <div class="file-info">
-                            <div class="file-name">${fileName}</div>
-                            <div class="progress-container"><span class="percent">Concluído</span></div>
-                        </div>
-                        <i class="fa-solid fa-trash remove-file" onclick="removeFileFromAgent('${agent.id}', '${fileName}', this)"></i>
-                    </li>`,
-        );
+    listConfig.innerHTML = "<li>Carregando...</li>";
+
+    try {
+      const res = await fetch(`${API_URL}/api/v1/document/${id}`, {
+        credentials: "include",
+        headers: { "ngrok-skip-browser-warning": "true" },
       });
+      const data = await res.json();
+      listConfig.innerHTML = "";
+      const docs = data.documents || [];
+      if (!docs.length) {
+        listConfig.innerHTML = "<li>Nenhum documento encontrado.</li>";
+      } else {
+        docs.forEach((doc) => {
+          listConfig.insertAdjacentHTML(
+            "beforeend",
+            `<li class="file-item">
+              <i class="fa-regular fa-file-lines file-icon"></i>
+              <div class="file-info">
+                <div class="file-name">${doc.file_name}</div>
+              </div>
+              <i class="fa-solid fa-trash remove-file" 
+                onclick="removeFileFromAgent('${id}', '${doc.id}', this)">
+              </i>
+            </li>`
+          );
+        });
+      }
+    } catch {
+      listConfig.innerHTML = "<li>Erro ao carregar documentos.</li>";
     }
 
     currentEditingAgentId = id;
@@ -330,6 +346,9 @@ function configAgent(id) {
           throw new Error(result.detail || "Falha ao editar agente");
         }
 
+        await uploadPendingFiles(id);
+        await deletePendingFiles(id);
+
         const index = agents.findIndex((a) => a.id === id);
         if (index !== -1) agents[index] = result;
 
@@ -378,12 +397,14 @@ async function deleteAgent(id, event) {
   }
 }
 
-function removeFileFromAgent(agentId, fileName, element) {
-  const agent = agents.find((a) => a.id === agentId);
-  if (agent && agent.arquivos) {
-    agent.arquivos = agent.arquivos.filter((f) => f !== fileName);
-    element.parentElement.remove();
+async function deletePendingFiles(agentId) {
+  for (const documentId of pendingDeletes) {
+    await fetch(`${API_URL}/api/v1/document/${agentId}/${documentId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
   }
+  pendingDeletes = [];
 }
 
 async function logout() {
@@ -404,7 +425,10 @@ window.configAgent = configAgent;
 window.addAgent = addAgent;
 window.deleteAgent = deleteAgent;
 window.switchTab = switchTab;
-window.removeFileFromAgent = removeFileFromAgent;
+window.removeFileFromAgent = function(agentId, documentId, element) {
+  pendingDeletes.push(documentId);
+  element.closest(".file-item").remove();
+};
 
 logoutBtn.addEventListener("click", logout);
 
