@@ -1,5 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from backend.schemas.base import Base
 
@@ -8,7 +9,7 @@ class User(Base):
     __tablename__ = 'users'
     __table_args__ = {'schema': 'app'}
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True)
     full_name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
@@ -21,7 +22,7 @@ class Agent(Base):
     __tablename__ = 'agents'
     __table_args__ = {'schema': 'app'}
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     instruction = Column(String, nullable=False)
