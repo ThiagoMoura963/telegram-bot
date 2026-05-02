@@ -1,7 +1,7 @@
 # type: ignore
 
-import secrets
 import os
+import secrets
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
