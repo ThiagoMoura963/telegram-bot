@@ -42,6 +42,11 @@ def upgrade() -> None:
         ),
         sa.Column('file_name', sa.Text(), nullable=False),
         sa.Column(
+            'agent_id',
+            postgresql.UUID(as_uuid=True),
+            nullable=False,
+        ),
+        sa.Column(
             'created_at',
             sa.TIMESTAMP(timezone=True),
             server_default=sa.text('now()'),
@@ -62,7 +67,7 @@ def upgrade() -> None:
         sa.Column(
             'document_id',
             postgresql.UUID(as_uuid=True),
-            sa.ForeignKey('app.documents.id'),
+            sa.ForeignKey('app.documents.id', ondelete='CASCADE'),
             nullable=False,
         ),
         sa.Column('content', sa.String(), nullable=False),
@@ -78,12 +83,12 @@ def upgrade() -> None:
         USING hnsw (content_vector vector_cosine_ops)
         WITH (m='16', ef_construction='64')
     """)
-
-
 #
 # def downgrade() -> None:
 #    """Downgrade schema."""
 #    op.execute('DROP INDEX IF EXISTS app.document_chunks_content_vector_hnsw_idx')
+#    op.drop_constraint('fk_documents_agent', 'documents', schema='app', type_='foreignkey')
+#    op.drop_table('agents', schema='app')
 #
 #   op.drop_table('document_chunks', schema='app')
 #    op.drop_table('documents', schema='app')

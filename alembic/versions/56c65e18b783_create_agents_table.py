@@ -38,6 +38,15 @@ def upgrade() -> None:
         schema='app',
     )
 
+    op.create_foreign_key(
+    'fk_documents_agent',
+    'documents', 'agents',
+    ['agent_id'], ['id'],
+    source_schema='app',
+    referent_schema='app',
+    ondelete='CASCADE'
+    )
+
 
 def downgrade() -> None:
     """Downgrade schema."""
