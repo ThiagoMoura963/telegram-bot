@@ -83,6 +83,8 @@ def upgrade() -> None:
         USING hnsw (content_vector vector_cosine_ops)
         WITH (m='16', ef_construction='64')
     """)
+
+
 #
 # def downgrade() -> None:
 #    """Downgrade schema."""
