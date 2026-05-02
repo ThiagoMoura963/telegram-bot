@@ -27,7 +27,7 @@ def upgrade() -> None:
 
     if 'description' not in columns:
         op.add_column('agents', sa.Column('description', sa.Text()), schema='app')
-    
+
     if 'telegram_token' not in columns:
         op.add_column('agents', sa.Column('telegram_token', sa.Text()), schema='app')
 
