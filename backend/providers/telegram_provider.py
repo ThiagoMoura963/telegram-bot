@@ -5,6 +5,7 @@ from telegramify_markdown import markdownify
 from backend.infra.repositories.agent_repository import AgentRepository
 from backend.infra.repositories.chunks_repository import ChunksRepository
 from backend.services.chat_service import ChatService
+from backend.services.conversation_service import ConversationService
 
 
 class TelegramProvider:
@@ -23,11 +24,19 @@ class TelegramProvider:
         if not (update and update.message and update.message.text):
             return
 
-        chat_id = update.message.chat.id
+        chat_id = str(update.message.chat.id)
         user_message = update.message.text
 
-        embedding_message = chat_service.get_query_vector(user_message)
+        conversation_service = ConversationService()
 
+        if user_message.strip().lower() == '/reset':
+            conversation_service.clear_context(agent_id=agent_id, chat_id=chat_id)
+            bot.send_message(chat_id, '🔄 Histórico apagado! Podemos começar do zero.')
+            return
+
+        history = conversation_service.get_context(agent_id=agent_id, chat_id=chat_id)
+
+        embedding_message = chat_service.get_query_vector(user_message)
         chunk_repository = ChunksRepository()
         candidate_chunks = chunk_repository.find_similiar_chunk(embedding_message, limit=15, agent_id=agent_id)
 
@@ -51,8 +60,12 @@ class TelegramProvider:
         answer = chat_service.get_answer(
             message=final_prompt,
             system_instruction=agent['system_prompt'],
+            history=history,
         )
 
         formatted_answer = markdownify(answer)
+
+        conversation_service.add_message(agent_id=agent_id, chat_id=chat_id, role='user', content=user_message)
+        conversation_service.add_message(agent_id=agent_id, chat_id=chat_id, role='model', content=answer)
 
         bot.send_message(chat_id, formatted_answer, parse_mode='MarkdownV2')

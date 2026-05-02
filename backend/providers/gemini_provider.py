@@ -10,11 +10,18 @@ class GeminiProvider:
     def __init__(self):
         self.client = Client(api_key=os.getenv('GEMINI_API_KEY'))
 
-    def generate_text(self, prompt: str, system_instruction: str) -> str:
+    def generate_text(
+        self,
+        prompt: str,
+        system_instruction: str,
+        history: list[dict] | None = None,
+    ) -> str:
         try:
+            contents = self._build_contents(history or [], prompt)
+
             response = self.client.models.generate_content(
                 model='gemini-3.1-flash-lite-preview',
-                contents=prompt,
+                contents=contents,
                 config=types.GenerateContentConfig(system_instruction=system_instruction),
             )
 
@@ -24,6 +31,23 @@ class GeminiProvider:
             return response.text
         except Exception as e:
             raise RuntimeError(f'Falha na comunicação com o Gemini: {e}') from e
+
+    def _build_contents(self, history: list[dict], current_prompt: str) -> list[types.Content]:
+        contents = []
+        for message in history:
+            contents.append(
+                types.Content(
+                    role=message['role'],
+                    parts=[types.Part(text=message['content'])],
+                )
+            )
+        contents.append(
+            types.Content(
+                role='user',
+                parts=[types.Part(text=current_prompt)],
+            )
+        )
+        return contents
 
     def generate_embedding(self, text):
         try:
