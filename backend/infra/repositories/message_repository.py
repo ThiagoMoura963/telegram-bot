@@ -36,6 +36,23 @@ class MessageRepository:
         rows.reverse()
         return [{'role': row[0], 'content': row[1]} for row in rows]
 
+    def search_semantic_history(self, user_id, agent_id, query_vector, limit=5):
+        sql = (
+            'SELECT role, content '
+            'FROM app.messages '
+            'WHERE agent_id = %s '
+            'AND user_id = %s '
+            'AND vector_message IS NOT NULL '
+            'ORDER BY vector_message <=> %s::vector '
+            'LIMIT %s;'
+        )
+
+        with PostgresManager() as cursor:
+            cursor.execute(sql, (agent_id, user_id, query_vector, limit))
+            rows = cursor.fetchall()
+
+            return [{'role': row[0], 'content': row[1]} for row in rows]
+
     def delete_history(self, user_id: str, agent_id: str) -> None:
         with PostgresManager() as cursor:
             cursor.execute(
