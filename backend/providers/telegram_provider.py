@@ -1,71 +1,73 @@
+# type: ignore
+
 import telebot
 from telebot import types
 from telegramify_markdown import markdownify
 
 from backend.infra.repositories.agent_repository import AgentRepository
 from backend.infra.repositories.chunks_repository import ChunksRepository
-from backend.services.chat_service import ChatService
+from backend.infra.repositories.message_repository import MessageRepository
 from backend.services.conversation_service import ConversationService
 
 
 class TelegramProvider:
-    def process_webhook(self, agent_id, user_id, json_data, chat_service: ChatService):
-        agent_repository = AgentRepository()
-        agent = agent_repository.get_by_id(agent_id, user_id)
+    def __init__(self):
+        self.agent_repo = AgentRepository()
+        self.message_repo = MessageRepository()
 
+    def process_webhook(self, agent_id, user_id, json_data, chat_service):
+        agent = self.agent_repo.get_by_id(agent_id, user_id)
         if not agent or not agent['is_active']:
             return
-
-        print('ID do TELEGRAM:', agent['telegram_token'])
 
         bot = telebot.TeleBot(agent['telegram_token'])
         update = types.Update.de_json(json_data)
 
-        if not (update and update.message and update.message.text):
-            return
+        conv_service = ConversationService(self.message_repo, ChunksRepository(), chat_service)
 
-        chat_id = str(update.message.chat.id)
-        user_message = update.message.text
+        self._register_handlers(bot, agent_id, user_id, chat_service, conv_service, agent)
 
-        conversation_service = ConversationService()
+        bot.process_new_updates([update])
 
-        if user_message.strip().lower() == '/reset':
-            conversation_service.clear_context(agent_id=agent_id, chat_id=chat_id)
-            bot.send_message(chat_id, '🔄 Histórico apagado! Podemos começar do zero.')
-            return
+    def _register_handlers(self, bot, agent_id, user_id, chat_service, conv_service, agent):
+        @bot.message_handler(commands=['reset'])
+        def handle_reset(message):
+            self.message_repo.delete_history(user_id=user_id, agent_id=agent_id)
+            bot.send_message(message.chat.id, '🔄 Histórico apagado!')
 
-        history = conversation_service.get_context(agent_id=agent_id, chat_id=chat_id)
+        @bot.message_handler(commands=['registrar'])
+        def handle_register(message):
+            content = telebot.util.extract_arguments(message.text)
+            if not content:
+                bot.send_message(message.chat.id, '⚠️ Uso: `/registrar seu texto`')
+                return
 
-        embedding_message = chat_service.get_query_vector(user_message)
-        chunk_repository = ChunksRepository()
-        candidate_chunks = chunk_repository.find_similiar_chunk(embedding_message, limit=15, agent_id=agent_id)
+            vector = chat_service.get_query_vector(content, is_query=False)
+            self.message_repo.save(user_id, agent_id, 'user', content, vector)
+            bot.send_message(message.chat.id, '✅ Registrado!')
 
-        if candidate_chunks:
-            context = '\n\n'.join(f'[Documento: {chunk["source"]}]\n{chunk["content"]}' for chunk in candidate_chunks)
+        @bot.message_handler(func=lambda message: True)
+        def handle_chat(message):
+            feedback_msg = bot.send_message(message.chat.id, '_Processando..._', parse_mode='Markdown')
 
-            final_prompt = f"""
-            Instrução: Use estritamente o contexto abaixo para responder 
-            à pergunta do usuário.
-            Se a resposta não estiver no contexto, diga que não sabe.
+            try:
+                bot.send_chat_action(message.chat.id, 'typing')
 
-            Contexto:
-            {context}
+                answer = conv_service.execute_chat_flow(
+                    user_id=user_id, agent_id=agent_id, text=message.text, system_prompt=agent['system_prompt']
+                )
 
-            Pergunta: 
-            {user_message}
-            """
-        else:
-            final_prompt = user_message
+                bot.edit_message_text(
+                    chat_id=message.chat.id,
+                    message_id=feedback_msg.message_id,
+                    text=markdownify(answer),
+                    parse_mode='MarkdownV2',
+                )
 
-        answer = chat_service.get_answer(
-            message=final_prompt,
-            system_instruction=agent['system_prompt'],
-            history=history,
-        )
-
-        formatted_answer = markdownify(answer)
-
-        conversation_service.add_message(agent_id=agent_id, chat_id=chat_id, role='user', content=user_message)
-        conversation_service.add_message(agent_id=agent_id, chat_id=chat_id, role='model', content=answer)
-
-        bot.send_message(chat_id, formatted_answer, parse_mode='MarkdownV2')
+            except Exception as e:
+                print(f'ERRO NO FLUXO DE CHAT: {e}')
+                bot.edit_message_text(
+                    chat_id=message.chat.id,
+                    message_id=feedback_msg.message_id,
+                    text='❌ Ops, ocorreu um erro ao processar sua resposta.',
+                )
