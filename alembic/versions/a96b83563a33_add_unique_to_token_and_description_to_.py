@@ -1,3 +1,5 @@
+# type: ignore
+
 """add_unique_to_token_and_description_to_agent
 
 Revision ID: a96b83563a33
@@ -17,24 +19,30 @@ revision: str = 'a96b83563a33'
 down_revision: Union[str, Sequence[str], None] = '2ce84d3d9c85'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
-
+from alembic import context # <-- Adicione isso no topo do arquivo junto com os outros imports
 
 def upgrade() -> None:
     """Upgrade schema."""
-    conn = op.get_bind()
-    inspector = sa.inspect(conn)
-    columns = [col['name'] for col in inspector.get_columns('agents', schema='app')]
+    # Se NÃO estiver no modo offline, faz a inspeção normal
+    if not context.is_offline_mode():
+        conn = op.get_bind()
+        inspector = sa.inspect(conn)
+        columns = [col['name'] for col in inspector.get_columns('agents', schema='app')]
 
-    if 'description' not in columns:
+        if 'description' not in columns:
+            op.add_column('agents', sa.Column('description', sa.Text()), schema='app')
+
+        if 'telegram_token' not in columns:
+            op.add_column('agents', sa.Column('telegram_token', sa.Text()), schema='app')
+
+        constraints = [c['name'] for c in inspector.get_unique_constraints('agents', schema='app')]
+        if 'uq_agents_telegram_token' not in constraints:
+            op.create_unique_constraint('uq_agents_telegram_token', 'agents', ['telegram_token'], schema='app')
+            
+    else:
         op.add_column('agents', sa.Column('description', sa.Text()), schema='app')
-
-    if 'telegram_token' not in columns:
         op.add_column('agents', sa.Column('telegram_token', sa.Text()), schema='app')
-
-    constraints = [c['name'] for c in inspector.get_unique_constraints('agents', schema='app')]
-    if 'uq_agents_telegram_token' not in constraints:
         op.create_unique_constraint('uq_agents_telegram_token', 'agents', ['telegram_token'], schema='app')
-
 
 def downgrade() -> None:
     """Downgrade schema."""
