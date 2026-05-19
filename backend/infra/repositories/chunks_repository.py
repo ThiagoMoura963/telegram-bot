@@ -9,8 +9,16 @@ class ChunksRepository:
 
     def save_all(self, document_id, chunks_data, user_id, agent_id):
         sql = 'INSERT INTO app.document_chunks (document_id, user_id, agent_id, content, content_vector) VALUES %s'
-
-        values = [(document_id, user_id, agent_id, chunk, list(vector)) for chunk, vector in chunks_data]
+        values = [
+            (
+                document_id, 
+                user_id, 
+                agent_id, 
+                chunk.replace('\x00', ''), 
+                list(vector)
+            ) 
+            for chunk, vector in chunks_data
+        ]
 
         try:
             with self.postgres_manager as cursor:

@@ -98,7 +98,8 @@ class AgentRepository:
             'name = COALESCE(%s, name), '
             'system_prompt = COALESCE(%s, system_prompt), '
             'description = COALESCE(%s, description), '
-            'is_active = COALESCE(%s, is_active) '
+            'is_active = COALESCE(%s, is_active), '
+            'telegram_token = COALESCE(%s, telegram_token) '
             'WHERE id = %s AND user_id = %s '
             'RETURNING id, name, system_prompt, description, telegram_token, api_token, is_active, user_id;'
         )
@@ -108,6 +109,7 @@ class AgentRepository:
             agent_data.get('system_prompt'),
             agent_data.get('description'),
             agent_data.get('is_active'),
+            agent_data.get('telegram_token'),
             agent_id,
             user_id,
         )
