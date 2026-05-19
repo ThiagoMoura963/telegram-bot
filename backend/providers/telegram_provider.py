@@ -2,6 +2,7 @@
 
 import telebot
 from telebot import types
+import traceback
 from telegramify_markdown import markdownify
 
 from backend.infra.repositories.agent_repository import AgentRepository
@@ -81,9 +82,13 @@ class TelegramProvider:
                 )
 
             except Exception as e:
-                print(f'ERRO NO FLUXO DE CHAT: {e}')
+                error_details = traceback.format_exc() 
+                print(f'ERRO NO FLUXO DE CHAT:\n{error_details}', flush=True)
+                
+                debug_msg = f"❌ Ops, erro:\n\n{error_details[-3000:]}"
+                
                 bot.edit_message_text(
                     chat_id=message.chat.id,
                     message_id=feedback_msg.message_id,
-                    text='❌ Ops, ocorreu um erro ao processar sua resposta.',
+                    text=debug_msg
                 )
