@@ -7,6 +7,7 @@ from telegramify_markdown import markdownify
 from backend.infra.repositories.agent_repository import AgentRepository
 from backend.infra.repositories.chunks_repository import ChunksRepository
 from backend.infra.repositories.message_repository import MessageRepository
+from backend.infra.repositories.telegram_user_repository import TelegramUserRepository
 from backend.services.conversation_service import ConversationService
 
 
@@ -14,6 +15,7 @@ class TelegramProvider:
     def __init__(self):
         self.agent_repo = AgentRepository()
         self.message_repo = MessageRepository()
+        self.telegram_user_repo = TelegramUserRepository()
 
     def process_webhook(self, agent_id, user_id, json_data, chat_service):
         agent = self.agent_repo.get_by_id(agent_id, user_id)
@@ -22,10 +24,20 @@ class TelegramProvider:
 
         bot = telebot.TeleBot(agent['telegram_token'])
         update = types.Update.de_json(json_data)
+        if not update.message:
+            return
+        
+        telegram_user = update.message.from_user
 
+        internal_user_uuid = self.telegram_user_repo.upsert(
+            telegram_id=telegram_user.id,
+            first_name=telegram_user.first_name,
+            username=telegram_user.username
+        )
+        
         conv_service = ConversationService(self.message_repo, ChunksRepository(), chat_service)
 
-        self._register_handlers(bot, agent_id, user_id, chat_service, conv_service, agent)
+        self._register_handlers(bot, agent_id, internal_user_uuid, chat_service, conv_service, agent)
 
         bot.process_new_updates([update])
 
@@ -54,7 +66,11 @@ class TelegramProvider:
                 bot.send_chat_action(message.chat.id, 'typing')
 
                 answer = conv_service.execute_chat_flow(
-                    user_id=user_id, agent_id=agent_id, text=message.text, system_prompt=agent['system_prompt']
+                    user_id=user_id, 
+                    agent_id=agent_id, 
+                    text=message.text, 
+                    system_prompt=agent['system_prompt'],
+                    agent_name=agent['name']
                 )
 
                 bot.edit_message_text(

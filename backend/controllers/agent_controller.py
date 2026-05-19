@@ -70,6 +70,7 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
 @router.put('/{agent_id}')
 async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
     agent_data = await request.json()
+    
     agent_repository = AgentRepository()
     setup_agent_service = AgentSetupService(agent_repository)
 
