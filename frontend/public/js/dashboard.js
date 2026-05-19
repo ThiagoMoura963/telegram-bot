@@ -132,17 +132,17 @@ export function renderPendingFiles() {
           onclick="removePendingFile('${file.name}', this)">
         </i>
       </li>
-      `
+      `,
     );
   });
 }
 
-window.removePendingFile = function(fileName, btn) {
-  pendingFiles = pendingFiles.filter(f => f.name !== fileName);
-  
-const itemVisual = btn.closest('.file-item');
-    
-    if (itemVisual) itemVisual.remove();
+window.removePendingFile = function (fileName, btn) {
+  pendingFiles = pendingFiles.filter((f) => f.name !== fileName);
+
+  const itemVisual = btn.closest(".file-item");
+
+  if (itemVisual) itemVisual.remove();
 };
 
 async function uploadPendingFiles(agentId) {
@@ -256,6 +256,7 @@ async function configAgent(id) {
       agent.system_prompt || "";
     document.getElementById("tokenTelegramConfig").value =
       agent.telegram_token || "";
+
     document.getElementById("switchCheck").checked = !!agent.is_active;
 
     const listConfig = document.getElementById("docsListConfig");
@@ -283,7 +284,7 @@ async function configAgent(id) {
               <i class="fa-solid fa-trash remove-file" 
                 onclick="removeFileFromAgent('${id}', '${doc.id}', this)">
               </i>
-            </li>`
+            </li>`,
           );
         });
       }
@@ -425,7 +426,7 @@ window.configAgent = configAgent;
 window.addAgent = addAgent;
 window.deleteAgent = deleteAgent;
 window.switchTab = switchTab;
-window.removeFileFromAgent = function(agentId, documentId, element) {
+window.removeFileFromAgent = function (agentId, documentId, element) {
   pendingDeletes.push(documentId);
   element.closest(".file-item").remove();
 };
