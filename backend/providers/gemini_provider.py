@@ -31,7 +31,7 @@ class GeminiProvider:
                 batch = texts[i : i + batch_size]
 
                 response = self.client.models.embed_content(
-                    model='gemini-embedding-2-preview',
+                    model='gemini-embedding-2',
                     contents=batch,
                     config=types.EmbedContentConfig(output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'),
                 )
