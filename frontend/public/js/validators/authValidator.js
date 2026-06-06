@@ -3,7 +3,7 @@ function validateEmail(email) {
   if (!sanitizedEmail) return "O email é obrigatório.";
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return "Email inválido.";
+  if (!emailRegex.test(sanitizedEmail)) return "Email inválido.";
   return null;
 }
 
