@@ -49,10 +49,11 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
         key='access_token',
         value=token,
         httponly=True,
-        samesite='none',
+        samesite='lax',
         secure=True,
         path='/',
         max_age=SESSION_IN_SECONDS,
+        domain=None,
     )
 
     return {'status': 'success', 'message': 'Logado com sucesso'}

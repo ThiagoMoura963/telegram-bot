@@ -26,7 +26,9 @@
       </div>
     </nav>
 
-    <section class="agents-grid" id="gridAgents"></section>
+    <section class="agents-grid" id="gridAgents">
+      <div id="gridSpinner" class="spinner light"></div>
+    </section>
 
     <div class="main-actions">
       <button id="openModal" class="create-agent-btn" onclick="addAgent()">
@@ -209,6 +211,7 @@
         <div id="tab-docs-config" class="tab-content">
           <div class="upload-container">
             <h2>Adicionar Documentos</h2>
+
             <p>Faça upload de arquivos para treinar seu agente.</p>
 
             <div class="drop-area-box" id="dropZoneConfig">
@@ -225,6 +228,12 @@
                 accept=".pdf,.xlsx,.csv"
               />
             </div>
+
+            <div
+              id="docsSpinner"
+              class="spinner"
+              style="display: none; margin: 10px auto"
+            ></div>
 
             <ul class="file-list" id="docsListConfig"></ul>
           </div>
