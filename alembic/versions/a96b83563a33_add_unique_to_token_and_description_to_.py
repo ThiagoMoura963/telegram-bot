@@ -8,6 +8,7 @@ Create Date: 2026-04-27 22:44:50.678195
 
 """
 
+from alembic import context
 from typing import Sequence, Union
 
 import sqlalchemy as sa
@@ -19,7 +20,7 @@ revision: str = 'a96b83563a33'
 down_revision: Union[str, Sequence[str], None] = '2ce84d3d9c85'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
-from alembic import context # <-- Adicione isso no topo do arquivo junto com os outros imports
+
 
 def upgrade() -> None:
     """Upgrade schema."""
@@ -38,11 +39,12 @@ def upgrade() -> None:
         constraints = [c['name'] for c in inspector.get_unique_constraints('agents', schema='app')]
         if 'uq_agents_telegram_token' not in constraints:
             op.create_unique_constraint('uq_agents_telegram_token', 'agents', ['telegram_token'], schema='app')
-            
+
     else:
         op.add_column('agents', sa.Column('description', sa.Text()), schema='app')
         op.add_column('agents', sa.Column('telegram_token', sa.Text()), schema='app')
         op.create_unique_constraint('uq_agents_telegram_token', 'agents', ['telegram_token'], schema='app')
+
 
 def downgrade() -> None:
     """Downgrade schema."""

@@ -15,7 +15,9 @@ class ConversationService:
 
         linear_history = self.message_repository.get_history(user_id, agent_id, limit=20)
 
-        final_system_instruction = self._build_prompt(base_prompt=system_prompt, docs=docs, memory=semantic_memory, agent_name=agent_name)
+        final_system_instruction = self._build_prompt(
+            base_prompt=system_prompt, docs=docs, memory=semantic_memory, agent_name=agent_name
+        )
 
         answer = self.chat_service.get_answer(
             message=text, system_instruction=final_system_instruction, history=linear_history
@@ -52,7 +54,8 @@ class ConversationService:
             Seu nome é {agent_name}. Você deve manter esse comportamento de forma consistente em todas as interações.
 
             ### BASE DE CONHECIMENTO OFICIAL (RAG)
-            Você deve priorizar as informações abaixo. Sempre que usar um dado desta seção, cite explicitamente o nome da fonte.
+            Você deve priorizar as informações abaixo. Sempre que usar um dado desta seção, cite explicitamente 
+            o nome da fonte.
 
             {docs_section}
 
@@ -66,7 +69,12 @@ class ConversationService:
             ### DIRETRIZES DE RESPOSTA
             1. Se a informação vier da BASE DE CONHECIMENTO, cite: "Segundo o documento [nome]..."
             2. Se vier da MEMÓRIA SEMÂNTICA, trate como fato persistente do usuário.
-            3. ATENÇÃO: Ao ser perguntado sobre quais documentos ou informações você possui, IGNORE completamente as respostas que você deu anteriormente no histórico do chat. O histórico pode estar desatualizado.
-            4. Sempre leia a seção BASE DE CONHECIMENTO e MEMÓRIA SEMÂNTICA injetadas neste exato prompt e baseie sua resposta APENAS no que está listado acima agora.
+            3. ATENÇÃO: Ao ser perguntado sobre quais documentos ou informações você possui, IGNORE completamente as
+            respostas que você deu 
+            anteriormente no histórico do chat. 
+            O histórico pode estar desatualizado.
+            4. Sempre leia a seção BASE DE CONHECIMENTO e MEMÓRIA SEMÂNTICA injetadas neste exato prompt e baseie sua 
+            resposta 
+            APENAS no que está listado acima agora.
             5. Utilize MarkdownV2 para formatação no Telegram.
         """

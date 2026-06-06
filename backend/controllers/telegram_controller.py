@@ -24,14 +24,8 @@ async def telegram_webhook(api_token, request: Request, background_tasks: Backgr
 
     telegram_provider = TelegramProvider()
     chat_service = ChatService(provider=GeminiProvider())
-    
-    background_tasks.add_task(
-        telegram_provider.process_webhook, 
-        agent['id'], 
-        agent['user_id'], 
-        data, 
-        chat_service
-    )
+
+    background_tasks.add_task(telegram_provider.process_webhook, agent['id'], agent['user_id'], data, chat_service)
 
     return {'status': 'success'}
 

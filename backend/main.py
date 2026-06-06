@@ -28,7 +28,7 @@ origins = [
     'http://localhost:5500',
     'http://127.0.0.1:5500',
     'https://12ae-2804-14d-8e88-4ce0-4918-195a-78e5-5d18.ngrok-free.app',
-    'https://telegram-bot-backend-dpui.onrender.com'
+    'https://telegram-bot-backend-dpui.onrender.com',
 ]
 
 app.add_middleware(
