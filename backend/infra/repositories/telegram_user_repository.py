@@ -1,11 +1,12 @@
-# type: ignore 
+# type: ignore
 
 from ..database import PostgresManager
+
 
 class TelegramUserRepository:
     def __init__(self):
         self.postgres_manager = PostgresManager()
-    
+
     def upsert(self, telegram_id, first_name, username):
         sql = (
             'INSERT INTO app.telegram_users (telegram_id, first_name, username) '

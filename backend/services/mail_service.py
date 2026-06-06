@@ -40,4 +40,4 @@ class MailService:
                 html_content=html,
             )
         except ApiError as e:
-            raise Exception(f'Erro ao enviar email: {e.status_code} - {e.body}')
+            raise Exception(f'Erro ao enviar email: {e.status_code} - {e.body}') from e
