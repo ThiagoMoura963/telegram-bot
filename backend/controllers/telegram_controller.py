@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status, BackgroundTasks
 
 from backend.core.deps import get_current_user_id
 from backend.infra.repositories.agent_repository import AgentRepository
@@ -13,7 +13,7 @@ router = APIRouter(prefix='/api/v1/telegram', tags=['Telegram Webhook'])
 
 
 @router.post('/webhook/{api_token}')
-async def telegram_webhook(api_token, request: Request):
+async def telegram_webhook(api_token, request: Request, background_tasks: BackgroundTasks):
     data = await request.json()
 
     agent_repository = AgentRepository()
@@ -24,7 +24,8 @@ async def telegram_webhook(api_token, request: Request):
 
     telegram_provider = TelegramProvider()
     chat_service = ChatService(provider=GeminiProvider())
-    telegram_provider.process_webhook(agent['id'], agent['user_id'], data, chat_service)
+
+    background_tasks.add_task(telegram_provider.process_webhook, agent['id'], agent['user_id'], data, chat_service)
 
     return {'status': 'success'}
 

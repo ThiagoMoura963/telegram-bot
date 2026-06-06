@@ -6,7 +6,6 @@ target-version = "py312"
 select = [
     "E",   # erros de estilo (pycodestyle)
     "F",   # erros lógicos (pyflakes)
-    "I",   # ordem de imports (isort)
     "B",   # bugs comuns (flake8-bugbear)
 ]
 

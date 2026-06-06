@@ -70,7 +70,7 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
 @router.put('/{agent_id}')
 async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depends(get_current_user_id)]):
     agent_data = await request.json()
-    
+
     agent_repository = AgentRepository()
     setup_agent_service = AgentSetupService(agent_repository)
 
@@ -95,7 +95,10 @@ async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depen
         else:
             base_url = str(request.base_url).rstrip('/')
             webhook_url = f'{base_url}/api/v1/telegram/webhook/{old_agent["api_token"]}'
-            setup_agent_service.activate_agent(agent_id, token_to_use, webhook_url, user_id)
+            success, message = setup_agent_service.activate_agent(agent_id, token_to_use, webhook_url, user_id)
+
+            if not success:
+                raise HTTPException(status_code=400, detail=f'Erro ao ativar webhook no Telegram: {message}')
 
     updated_agent = agent_repository.update(agent_id, agent_data, user_id)
 
