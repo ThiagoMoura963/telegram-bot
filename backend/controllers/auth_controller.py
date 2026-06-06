@@ -53,7 +53,7 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
         secure=True,
         path='/',
         max_age=SESSION_IN_SECONDS,
-        domain=None
+        domain=None,
     )
 
     return {'status': 'success', 'message': 'Logado com sucesso'}

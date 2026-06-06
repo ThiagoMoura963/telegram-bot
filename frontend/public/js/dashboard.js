@@ -42,9 +42,13 @@ function showErrors(errors, suffix = "") {
   });
 }
 
+let lastOpenedTab = "tab-general-config";
+
 function switchTab(tabId, event) {
-  const targetEl = event.currentTarget || event;
-  const modal = targetEl.closest("dialog");
+  const targetEl = event && event.currentTarget ? event.currentTarget : null;
+  const modal = targetEl
+    ? targetEl.closest("dialog")
+    : document.getElementById("modalConfig");
 
   modal
     .querySelectorAll(".tab-content")
@@ -54,8 +58,15 @@ function switchTab(tabId, event) {
     .forEach((btn) => btn.classList.remove("active"));
 
   document.getElementById(tabId).classList.add("active");
-  const btn = modal.querySelector(`button[onclick*="${tabId}"]`);
-  if (btn) btn.classList.add("active");
+
+  if (targetEl && targetEl.classList.contains("tab-btn")) {
+    targetEl.classList.add("active");
+  } else {
+    const btn = modal.querySelector(`button[onclick*="${tabId}"]`);
+    if (btn) btn.classList.add("active");
+  }
+
+  lastOpenedTab = tabId;
 }
 
 function createCardHTML(agent) {
@@ -165,6 +176,12 @@ async function uploadPendingFiles(agentId) {
   if (!response.ok) {
     throw new Error("Erro ao enviar documents");
   }
+
+  if (response.status === 401) {
+    window.location.href = "login.html";
+    return;
+  }
+
   pendingFiles = [];
 }
 
@@ -222,7 +239,13 @@ function addAgent() {
           showErrors(errorObj);
           return;
         }
+
         throw new Error(result.detail || "Erro ao salvar agente");
+
+        if (response.status === 401) {
+          window.location.href = "login.html";
+          return;
+        }
       }
 
       try {
@@ -250,8 +273,11 @@ function addAgent() {
 async function configAgent(id) {
   const agent = agents.find((a) => a.id === id);
   const modal = document.getElementById("modalConfig");
+  const docsSpinner = document.getElementById("docsSpinner");
+  const listConfig = document.getElementById("docsListConfig");
 
   if (agent) {
+    modal.showModal();
     pendingFiles = [];
     pendingDeletes = [];
     cleanErrors(modal);
@@ -263,19 +289,26 @@ async function configAgent(id) {
       agent.system_prompt || "";
     document.getElementById("tokenTelegramConfig").value =
       agent.telegram_token || "";
-
     document.getElementById("switchCheck").checked = !!agent.is_active;
 
-    const listConfig = document.getElementById("docsListConfig");
-    listConfig.innerHTML = "<li>Carregando...</li>";
+    listConfig.innerHTML = "";
+    docsSpinner.style.display = "block";
 
     try {
       const res = await fetch(`${API_URL}/api/v1/document/${id}`, {
         credentials: "include",
         headers: { "ngrok-skip-browser-warning": "true" },
       });
+
+      if (res.status === 401) {
+        window.location.href = "login.html";
+        return;
+      }
+
       const data = await res.json();
-      listConfig.innerHTML = "";
+
+      docsSpinner.style.display = "none";
+
       const docs = data.documents || [];
       if (!docs.length) {
         listConfig.innerHTML = "<li>Nenhum documento encontrado.</li>";
@@ -296,6 +329,7 @@ async function configAgent(id) {
         });
       }
     } catch {
+      docsSpinner.style.display = "none";
       listConfig.innerHTML = "<li>Erro ao carregar documentos.</li>";
     }
 
@@ -351,7 +385,13 @@ async function configAgent(id) {
             showErrors(errorObj, "Config");
             return;
           }
+
           throw new Error(result.detail || "Falha ao editar agente");
+
+          if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+          }
         }
 
         await uploadPendingFiles(id);
@@ -370,9 +410,6 @@ async function configAgent(id) {
         saveBtn.disabled = false;
       }
     };
-
-    modal.showModal();
-    switchTab("tab-general-config", modal);
   }
 }
 
@@ -393,6 +430,11 @@ async function deleteAgent(id, event) {
     });
 
     if (!response.ok) throw new Error("Erro ao deletar");
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
 
     agents = agents.filter((agent) => agent.id !== id);
     renderAgents();
@@ -422,7 +464,14 @@ async function logout() {
       headers: { "ngrok-skip-browser-warning": "true" },
       credentials: "include",
     });
+
     if (!response.ok) throw new Error("Falha no logout");
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+
     window.location.href = "login.html";
   } catch (error) {
     console.error("Erro no logout:", error);
@@ -441,6 +490,10 @@ window.removeFileFromAgent = function (agentId, documentId, element) {
 logoutBtn.addEventListener("click", logout);
 
 document.addEventListener("DOMContentLoaded", async function () {
+  const spinner = document.getElementById("gridSpinner");
+
+  spinner.style.display = "block";
+
   try {
     const response = await fetch(`${API_URL}/api/v1/agent`, {
       method: "GET",
@@ -448,18 +501,20 @@ document.addEventListener("DOMContentLoaded", async function () {
       credentials: "include",
     });
 
+    if (!response.ok) throw new Error("Falha ao buscar agentes");
+
     if (response.status === 401) {
       window.location.href = "login.html";
       return;
     }
-
-    if (!response.ok) throw new Error("Falha ao buscar agentes");
 
     const result = await response.json();
     agents = result.agents || [];
     renderAgents();
   } catch (error) {
     console.error("Erro inicial:", error);
+  } finally {
+    spinner.style.display = "none";
   }
 
   setupPendingFiles();
