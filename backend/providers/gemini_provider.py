@@ -58,7 +58,7 @@ class GeminiProvider:
 
         try:
             response = self.client.models.embed_content(
-                model='gemini-embedding-2-preview',
+                model='gemini-embedding-2',
                 contents=text,
                 config=types.EmbedContentConfig(output_dimensionality=1536, task_type=task_type),
             )

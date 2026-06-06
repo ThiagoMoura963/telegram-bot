@@ -66,6 +66,7 @@ class ConversationService:
             ### DIRETRIZES DE RESPOSTA
             1. Se a informação vier da BASE DE CONHECIMENTO, cite: "Segundo o documento [nome]..."
             2. Se vier da MEMÓRIA SEMÂNTICA, trate como fato persistente do usuário.
-            3. Se o usuário perguntar sobre documentos, liste apenas as fontes acima.
-            4. Utilize MarkdownV2 para formatação no Telegram.
+            3. ATENÇÃO: Ao ser perguntado sobre quais documentos ou informações você possui, IGNORE completamente as respostas que você deu anteriormente no histórico do chat. O histórico pode estar desatualizado.
+            4. Sempre leia a seção BASE DE CONHECIMENTO e MEMÓRIA SEMÂNTICA injetadas neste exato prompt e baseie sua resposta APENAS no que está listado acima agora.
+            5. Utilize MarkdownV2 para formatação no Telegram.
         """
