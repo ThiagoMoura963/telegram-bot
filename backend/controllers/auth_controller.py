@@ -5,6 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
+from backend.core.deps import get_current_user_id
+
 from backend.schemas.auth import ForgotPasswordRequest, ResetPasswordRequest, VerifyCodeRequest
 from backend.schemas.user import UserCreate, UserResponse
 from backend.services.auth_service import AuthService
@@ -15,6 +17,11 @@ router = APIRouter(prefix='/api/v1/auth', tags=['Authentication'])
 
 auth_service = AuthService()
 user_service = UserService()
+
+
+@router.get('/me')
+async def get_me(response: Response, user_id: Annotated[str, Depends(get_current_user_id)]):
+    return {'status': 'success'}
 
 
 @router.post('/register', response_model=UserResponse, status_code=status.HTTP_201_CREATED)

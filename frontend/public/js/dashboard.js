@@ -270,6 +270,31 @@ function addAgent() {
   };
 }
 
+function renderDocumentsList(docs, agentId) {
+  const listConfig = document.getElementById("docsListConfig");
+  listConfig.innerHTML = "";
+
+  if (!docs.length) {
+    listConfig.innerHTML = "<li>Nenhum documento encontrado.</li>";
+    return;
+  }
+
+  docs.forEach((doc) => {
+    listConfig.insertAdjacentHTML(
+      "beforeend",
+      `<li class="file-item">
+        <i class="fa-regular fa-file-lines file-icon"></i>
+        <div class="file-info">
+          <div class="file-name">${doc.file_name}</div>
+        </div>
+        <i class="fa-solid fa-trash remove-file" 
+          onclick="removeFileFromAgent('${agentId}', '${doc.id}', this)">
+        </i>
+      </li>`,
+    );
+  });
+}
+
 async function configAgent(id) {
   const agent = agents.find((a) => a.id === id);
   const modal = document.getElementById("modalConfig");
@@ -292,45 +317,35 @@ async function configAgent(id) {
     document.getElementById("switchCheck").checked = !!agent.is_active;
 
     listConfig.innerHTML = "";
-    docsSpinner.style.display = "block";
 
-    try {
-      const res = await fetch(`${API_URL}/api/v1/document/${id}`, {
-        credentials: "include",
-        headers: { "ngrok-skip-browser-warning": "true" },
-      });
-
-      if (res.status === 401) {
-        window.location.href = "login.html";
-        return;
-      }
-
-      const data = await res.json();
-
+    if (agent.documents) {
       docsSpinner.style.display = "none";
+      renderDocumentsList(agent.documents, id);
+    } else {
+      docsSpinner.style.display = "block";
 
-      const docs = data.documents || [];
-      if (!docs.length) {
-        listConfig.innerHTML = "<li>Nenhum documento encontrado.</li>";
-      } else {
-        docs.forEach((doc) => {
-          listConfig.insertAdjacentHTML(
-            "beforeend",
-            `<li class="file-item">
-              <i class="fa-regular fa-file-lines file-icon"></i>
-              <div class="file-info">
-                <div class="file-name">${doc.file_name}</div>
-              </div>
-              <i class="fa-solid fa-trash remove-file" 
-                onclick="removeFileFromAgent('${id}', '${doc.id}', this)">
-              </i>
-            </li>`,
-          );
+      try {
+        const res = await fetch(`${API_URL}/api/v1/document/${id}`, {
+          credentials: "include",
+          headers: { "ngrok-skip-browser-warning": "true" },
         });
+
+        if (res.status === 401) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const data = await res.json();
+
+        agent.documents = data.documents || [];
+
+        renderDocumentsList(data.documents || [], id);
+      } catch {
+        docsSpinner.style.display = "none";
+        listConfig.innerHTML = "<li>Erro ao carregar documentos.</li>";
+      } finally {
+        docsSpinner.style.display = "none";
       }
-    } catch {
-      docsSpinner.style.display = "none";
-      listConfig.innerHTML = "<li>Erro ao carregar documentos.</li>";
     }
 
     currentEditingAgentId = id;
@@ -380,6 +395,11 @@ async function configAgent(id) {
         const result = await response.json();
 
         if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+          }
+
           if (response.status === 400 && result.detail?.field) {
             const errorObj = { [result.detail.field]: result.detail.message };
             showErrors(errorObj, "Config");
@@ -387,11 +407,6 @@ async function configAgent(id) {
           }
 
           throw new Error(result.detail || "Falha ao editar agente");
-
-          if (response.status === 401) {
-            window.location.href = "login.html";
-            return;
-          }
         }
 
         await uploadPendingFiles(id);
