@@ -1,6 +1,21 @@
 import { API_URL } from "./config.js";
 import { authValidator } from "./validators/authValidator.js";
 
+async function checkSession() {
+  try {
+    const response = await fetch(`${API_URL}/api/v1/auth/me`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      window.location.href = "dashboard.html";
+    }
+  } catch (error) {
+    console.log("Usuário não está logado.");
+  }
+}
+
 const togglePassword = document.getElementById("togglePassword");
 const password = document.getElementById("password");
 
@@ -89,6 +104,8 @@ async function login(email, password) {
     btnLogin.disabled = false;
   }
 }
+
+checkSession();
 
 document.getElementById("login-form").addEventListener("submit", function (e) {
   e.preventDefault();
