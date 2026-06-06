@@ -43,7 +43,17 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
 
     token = result.get('access_token')
 
-    response.set_cookie(key='access_token', value=token, httponly=True, samesite='none', secure=True, path='/')
+    SESSION_IN_SECONDS = 30 * 24 * 60 * 60
+
+    response.set_cookie(
+        key='access_token', 
+        value=token, 
+        httponly=True, 
+        samesite='none', 
+        secure=True, 
+        path='/',
+        max_age=SESSION_IN_SECONDS
+    )
 
     return {'status': 'success', 'message': 'Logado com sucesso'}
 
