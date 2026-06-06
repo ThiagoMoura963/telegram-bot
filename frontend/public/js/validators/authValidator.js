@@ -1,7 +1,9 @@
 function validateEmail(email) {
-  if (!email) return "O email é obrigatório.";
+  const sanitizedEmail = email ? email.trim() : "";
+  if (!sanitizedEmail) return "O email é obrigatório.";
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return "Email inválido.";
+  if (!emailRegex.test(sanitizedEmail)) return "Email inválido.";
   return null;
 }
 
@@ -12,7 +14,8 @@ export const authValidator = {
     const emailErrors = validateEmail(email);
     if (emailErrors) errors.email = emailErrors;
 
-    if (!password) errors.password = "A senha é obrigatória.";
+    if (!password || !password.trim())
+      errors.password = "A senha é obrigatória.";
 
     return errors;
   },
@@ -23,9 +26,10 @@ export const authValidator = {
     const emailErrors = validateEmail(email);
     if (emailErrors) errors.email = emailErrors;
 
-    if (password.length < 6) errors.password = "Mínimo de 6 caracteres.";
+    if (!password || password.trim().length < 6)
+      errors.password = "Mínimo de 6 caracteres.";
 
-    if (!name) errors.name = "O nome é obrigatório.";
+    if (!name || !name.trim()) errors.name = "O nome é obrigatório.";
 
     return errors;
   },
@@ -45,7 +49,8 @@ export const authValidator = {
     const emailErrors = validateEmail(email);
     if (emailErrors) errors.email = emailErrors;
 
-    if (code.length < 6) errors.code = "Código inválido.";
+    if (code.length < 6 || code.trim().length < 6)
+      errors.code = "Código inválido.";
 
     return errors;
   },
@@ -53,7 +58,8 @@ export const authValidator = {
   resetPassword(password, resetPassword) {
     const errors = {};
 
-    if (password.length < 6) errors.password = "Mínimo de 6 caracteres.";
+    if (!password || password.trim().length < 6)
+      errors.password = "Mínimo de 6 caracteres.";
     if (password !== resetPassword)
       errors.confirmPassword = "As senhas não coincidem.";
 

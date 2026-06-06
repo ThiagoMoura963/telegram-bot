@@ -225,7 +225,14 @@ function addAgent() {
         throw new Error(result.detail || "Erro ao salvar agente");
       }
 
-      await uploadPendingFiles(result.id);
+      try {
+        await uploadPendingFiles(result.id);
+      } catch (error) {
+        console.error("Falha nos documentos:", error);
+        alert(
+          "Agente criado, mas houve uma falha ao processar os arquivos. Tente enviá-los novamente pela aba de configuração.",
+        );
+      }
 
       agents.push(result);
       renderAgents();
