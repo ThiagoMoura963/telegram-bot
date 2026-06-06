@@ -16,7 +16,7 @@ class GeminiProvider:
         try:
             contents = self._build_contents(history or [], prompt)
             response = self.client.models.generate_content(
-                model='gemini-3.1-flash-lite-preview',
+                model='gemini-3.1-flash-lite',
                 contents=contents,
                 config=types.GenerateContentConfig(system_instruction=system_instruction),
             )
@@ -31,7 +31,7 @@ class GeminiProvider:
                 batch = texts[i : i + batch_size]
 
                 response = self.client.models.embed_content(
-                    model='gemini-embedding-2-preview',
+                    model='gemini-embedding-2',
                     contents=batch,
                     config=types.EmbedContentConfig(output_dimensionality=1536, task_type='RETRIEVAL_DOCUMENT'),
                 )
@@ -58,7 +58,7 @@ class GeminiProvider:
 
         try:
             response = self.client.models.embed_content(
-                model='gemini-embedding-2-preview',
+                model='gemini-embedding-2',
                 contents=text,
                 config=types.EmbedContentConfig(output_dimensionality=1536, task_type=task_type),
             )
