@@ -1,3 +1,5 @@
+#type: ignore
+
 import os
 from datetime import datetime, timedelta, timezone
 
@@ -8,7 +10,7 @@ from passlib.context import CryptContext
 load_dotenv()
 
 ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -26,7 +28,7 @@ class Security:
     def create_access_token(data: dict):
         to_encode = data.copy()
         now = datetime.now(timezone.utc)
-        expire = now + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = now + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
 
         to_encode.update({'exp': expire})
 

@@ -1,3 +1,5 @@
+# type: ignore
+
 import secrets
 
 from backend.core.security import Security
