@@ -23,7 +23,7 @@ async def get_document(user_id: Annotated[str, Depends(get_current_user_id)], ag
 
 
 @router.post('/upload')
-async def upload_document(
+def upload_document(
     files: Annotated[list[UploadFile], File()],
     agent_id: Annotated[str, Form()],
     user_id: Annotated[str, Depends(get_current_user_id)],
@@ -35,7 +35,7 @@ async def upload_document(
     chunk_repository = ChunksRepository()
 
     for file in files:
-        content = await file.read()
+        content = file.file.read()
 
         document_processor = get_document_processor(file.content_type)
 
