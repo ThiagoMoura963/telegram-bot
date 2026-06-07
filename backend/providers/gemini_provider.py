@@ -16,7 +16,7 @@ class GeminiProvider:
         try:
             contents = self._build_contents(history or [], prompt)
             response = self.client.models.generate_content(
-                model='gemini-3.1-flash-lite',
+                model='gemini-3.5-flash',
                 contents=contents,
                 config=types.GenerateContentConfig(system_instruction=system_instruction),
             )
