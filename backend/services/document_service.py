@@ -18,7 +18,7 @@ class DocumentService:
 
             if not text.strip():
                 raise ValueError('O documento está vazio ou não possui texto extraível.')
-            
+
             if is_tabular:
                 chunks = [line for line in text.split('\n') if line.strip()]
             else:

@@ -38,9 +38,9 @@ def upload_document(
         content = file.file.read()
 
         is_tabular = file.content_type in [
-            'text/csv', 
-            'application/vnd.ms-excel', 
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            'text/csv',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]
 
         document_processor = get_document_processor(file.content_type)
