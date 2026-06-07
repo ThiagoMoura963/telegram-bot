@@ -12,14 +12,17 @@ class DocumentService:
             chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len
         )
 
-    def process(self, content):
+    def process(self, content, is_tabular=False):
         try:
             text = self.processor.get_text(content)
 
             if not text.strip():
                 raise ValueError('O documento está vazio ou não possui texto extraível.')
-
-            chunks = self.text_splitter.split_text(text)
+            
+            if is_tabular:
+                chunks = [line for line in text.split('\n') if line.strip()]
+            else:
+                chunks = self.text_splitter.split_text(text)
 
             vectors = self.chat_service.get_document_vectors(chunks)
 
