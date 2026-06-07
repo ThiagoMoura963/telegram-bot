@@ -19,7 +19,7 @@ class XlsxProcessor:
                 df = df.dropna(how='all').dropna(axis=1, how='all')
                 if not df.empty:
                     full_text += f'--- Aba: {sheet_name} ---\n'
-                    full_text += df.to_string(index=False, header=True) + '\n\n'
+                    full_text += df.to_markdown(index=False) + '\n\n'
 
             return full_text
         except Exception as e:
