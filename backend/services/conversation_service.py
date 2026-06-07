@@ -10,7 +10,7 @@ class ConversationService:
     def execute_chat_flow(self, user_id, agent_id, text, system_prompt, agent_name):
         query_vector = self.chat_service.get_query_vector(text)
 
-        docs = self.chunk_repository.find_similiar_chunk(query_vector, limit=500, agent_id=agent_id)
+        docs = self.chunk_repository.find_similiar_chunk(query_vector, limit=100, agent_id=agent_id)
         semantic_memory = self.message_repository.search_semantic_history(user_id, agent_id, query_vector, limit=10)
 
         linear_history = self.message_repository.get_history(user_id, agent_id, limit=20)
@@ -41,7 +41,9 @@ class ConversationService:
 
         memory_section = '\n'.join([f'- {m["content"]}' for m in memory]) if memory else 'Nenhuma lembrança relevante.'
 
-        return f"""
+        print(docs_section)
+
+        final_prompt = f"""
             {base_prompt}
 
             ### REGRAS INQUEBRÁVEIS DO SISTEMA (PRIORIDADE MÁXIMA)
@@ -81,3 +83,5 @@ class ConversationService:
             Se o dado não existir, diga que não consta.
             7. VERIFICAÇÃO DE FATOS: Confirme se o número citado é idêntico ao da fonte antes de responder.
         """
+
+        return final_prompt
