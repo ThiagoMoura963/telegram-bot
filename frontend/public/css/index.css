@@ -488,3 +488,16 @@ input:checked + .slider:before {
 
   background-color: #636363;
 }
+
+.delete-card-btn .spinner {
+  border: 2px solid rgba(255, 77, 77, 0.3);
+  border-top-color: #ff4d4d;
+}
+
+.delete-card-btn:disabled {
+  background: #fff;
+  color: #ff4d4d;
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.7;
+}
