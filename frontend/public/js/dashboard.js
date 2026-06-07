@@ -170,13 +170,13 @@ async function uploadPendingFiles(agentId) {
     credentials: "include",
   });
 
-  if (!response.ok) {
-    throw new Error("Erro ao enviar documents");
-  }
-
   if (response.status === 401) {
     window.location.href = "login.html";
     return;
+  }
+
+  if (!response.ok) {
+    throw new Error("Erro ao enviar documents");
   }
 
   pendingFiles = [];
@@ -231,6 +231,11 @@ function addAgent() {
       const result = await response.json();
 
       if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = "login.html";
+          return;
+        }
+
         if (response.status === 400 && result.detail?.field) {
           const errorObj = { [result.detail.field]: result.detail.message };
           showErrors(errorObj);
@@ -238,11 +243,6 @@ function addAgent() {
         }
 
         throw new Error(result.detail || "Erro ao salvar agente");
-
-        if (response.status === 401) {
-          window.location.href = "login.html";
-          return;
-        }
       }
 
       try {
@@ -444,12 +444,12 @@ async function deleteAgent(id, event) {
       credentials: "include",
     });
 
-    if (!response.ok) throw new Error("Erro ao deletar");
-
     if (response.status === 401) {
       window.location.href = "login.html";
       return;
     }
+
+    if (!response.ok) throw new Error("Erro ao deletar");
 
     agents = agents.filter((agent) => agent.id !== id);
     renderAgents();
@@ -516,12 +516,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       credentials: "include",
     });
 
-    if (!response.ok) throw new Error("Falha ao buscar agentes");
-
     if (response.status === 401) {
       window.location.href = "login.html";
       return;
     }
+
+    if (!response.ok) throw new Error("Falha ao buscar agentes");
 
     const result = await response.json();
     agents = result.agents || [];
