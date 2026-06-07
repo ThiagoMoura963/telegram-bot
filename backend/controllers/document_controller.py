@@ -37,11 +37,17 @@ def upload_document(
     for file in files:
         content = file.file.read()
 
+        is_tabular = file.content_type in [
+            'text/csv',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]
+
         document_processor = get_document_processor(file.content_type)
 
         document_service = DocumentService(document_processor)
 
-        chunks_data = document_service.process(content)
+        chunks_data = document_service.process(content, is_tabular=is_tabular)
 
         document_id = document_repository.save(file.filename, agent_id)
 

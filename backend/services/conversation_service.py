@@ -77,4 +77,7 @@ class ConversationService:
             resposta 
             APENAS no que está listado acima agora.
             5. Utilize MarkdownV2 para formatação no Telegram.
+            6. PROTOCOLOS NUMÉRICOS: Transcreva dados exatamente como na fonte. É proibido arredondar ou estimar.
+            Se o dado não existir, diga que não consta.
+            7. VERIFICAÇÃO DE FATOS: Confirme se o número citado é idêntico ao da fonte antes de responder.
         """
