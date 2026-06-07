@@ -16,6 +16,6 @@ class CsvProcessor:
             df = self.get_dataframe(content)
 
             df = df.dropna(how='all')
-            return df.to_string(index=False, header=True)
+            return df.to_markdown(index=False)
         except Exception as e:
             raise ValueError(f'Erro ao processar CSV com Pandas: {str(e)}') from e
