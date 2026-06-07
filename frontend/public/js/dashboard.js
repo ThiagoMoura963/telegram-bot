@@ -42,13 +42,12 @@ function showErrors(errors, suffix = "") {
   });
 }
 
-let lastOpenedTab = "tab-general-config";
-
 function switchTab(tabId, event) {
-  const targetEl = event && event.currentTarget ? event.currentTarget : null;
-  const modal = targetEl
-    ? targetEl.closest("dialog")
-    : document.getElementById("modalConfig");
+  const tabElement = document.getElementById(tabId);
+  const modal =
+    event?.currentTarget?.closest("dialog") || tabElement.closest("dialog");
+
+  if (!modal) return;
 
   modal
     .querySelectorAll(".tab-content")
@@ -57,16 +56,14 @@ function switchTab(tabId, event) {
     .querySelectorAll(".tab-btn")
     .forEach((btn) => btn.classList.remove("active"));
 
-  document.getElementById(tabId).classList.add("active");
+  tabElement.classList.add("active");
 
-  if (targetEl && targetEl.classList.contains("tab-btn")) {
-    targetEl.classList.add("active");
+  if (event?.currentTarget?.classList.contains("tab-btn")) {
+    event.currentTarget.classList.add("active");
   } else {
     const btn = modal.querySelector(`button[onclick*="${tabId}"]`);
     if (btn) btn.classList.add("active");
   }
-
-  lastOpenedTab = tabId;
 }
 
 function createCardHTML(agent) {
