@@ -11,7 +11,7 @@ class AgentSetupService:
         self.repository: AgentRepository = agent_repository
 
     def activate_agent(self, agent_id, token, webhook_url, user_id):
-        success, message = self._register_webhook(token, webhook_url)
+        success, message = self._register_webhook(token, webhook_url, drop_pending_updates=True)
 
         if success:
             try:
@@ -58,11 +58,13 @@ class AgentSetupService:
         except Exception:
             return False, 'Serviço do telegram indisponível.'
 
-    def _register_webhook(self, token, webhook_url):
+    def _register_webhook(self, token, webhook_url, drop_pending_updates=False):
         endpoint = f'{self.api_base_url}{token}/setWebhook'
 
+        payload = {'url': webhook_url, 'drop_pending_updates': drop_pending_updates}
+
         try:
-            response = requests.post(endpoint, data={'url': webhook_url}, timeout=10)
+            response = requests.post(endpoint, data=payload, timeout=10)
             result = response.json()
 
             if result.get('ok'):
