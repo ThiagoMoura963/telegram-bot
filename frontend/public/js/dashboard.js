@@ -436,7 +436,9 @@ async function deleteAgent(id, event) {
 
   btn.classList.add("loading");
   btn.disabled = true;
-
+  btn.style.backgroundColor = "#fff";
+  btn.style.borderColor = "#ff4d4d";
+  btn.style.color = "#ff4d4d";
   try {
     const response = await fetch(`${API_URL}/api/v1/agent/${id}`, {
       method: "DELETE",
