@@ -10,8 +10,8 @@ class ConversationService:
     def execute_chat_flow(self, user_id, agent_id, text, system_prompt, agent_name):
         query_vector = self.chat_service.get_query_vector(text)
 
-        docs = self.chunk_repository.find_similiar_chunk(query_vector, limit=10, agent_id=agent_id)
-        semantic_memory = self.message_repository.search_semantic_history(user_id, agent_id, query_vector, limit=3)
+        docs = self.chunk_repository.find_similiar_chunk(query_vector, limit=500, agent_id=agent_id)
+        semantic_memory = self.message_repository.search_semantic_history(user_id, agent_id, query_vector, limit=10)
 
         linear_history = self.message_repository.get_history(user_id, agent_id, limit=20)
 
