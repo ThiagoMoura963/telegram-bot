@@ -63,7 +63,7 @@ async def create_agent(request: Request, user_id: Annotated[str, Depends(get_cur
             agent_repository.delete(new_agent['id'], user_id)
 
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'Erro interno do servidor: {e}'
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Erro interno ao processar a requisição.'
         ) from e
 
 
@@ -79,28 +79,41 @@ async def update_agent(agent_id, request: Request, user_id: Annotated[str, Depen
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Agent not found.')
 
     new_token = agent_data.get('telegram_token')
-    token_to_use = new_token if new_token else old_agent['telegram_token']
+    new_active_status = agent_data.get('is_active')
 
-    if new_token:
+    token_changed = new_token and new_token != old_agent['telegram_token']
+    status_changed = new_active_status is not None and new_active_status != old_agent['is_active']
+
+    if token_changed:
         is_valid, _ = setup_agent_service.validate_token(new_token)
         if not is_valid:
             raise HTTPException(
                 status_code=400, detail={'field': 'tokenTelegramConfig', 'message': 'Token inválido ou revogado.'}
             )
 
-    new_active_status = agent_data.get('is_active')
-    if new_active_status is not None and new_active_status != old_agent['is_active']:
-        if new_active_status is False:
-            setup_agent_service.deactivate_agent(agent_id, token_to_use, user_id)
-        else:
-            base_url = str(request.base_url).rstrip('/')
-            webhook_url = f'{base_url}/api/v1/telegram/webhook/{old_agent["api_token"]}'
-            success, message = setup_agent_service.activate_agent(agent_id, token_to_use, webhook_url, user_id)
+    base_url = str(request.base_url).rstrip('/')
+    webhook_url = f'{base_url}/api/v1/telegram/webhook/{old_agent["api_token"]}'
 
+    if token_changed:
+        setup_agent_service.deactivate_agent(agent_id, old_agent['telegram_token'], user_id)
+
+    final_active_status = new_active_status if new_active_status is not None else old_agent['is_active']
+    token_to_use = new_token if new_token else old_agent['telegram_token']
+
+    if final_active_status:
+        if status_changed or token_changed:
+            success, message = setup_agent_service.activate_agent(agent_id, token_to_use, webhook_url, user_id)
             if not success:
                 raise HTTPException(status_code=400, detail=f'Erro ao ativar webhook no Telegram: {message}')
+    else:
+        if status_changed:
+            setup_agent_service.deactivate_agent(agent_id, token_to_use, user_id)
 
-    updated_agent = agent_repository.update(agent_id, agent_data, user_id)
+    try:
+        updated_agent = agent_repository.update(agent_id, agent_data, user_id)
+    except Exception as e:
+        print(f'Erro ao salvar agente: {str(e)}')
+        raise HTTPException(status_code=500, detail='Erro interno ao processar a requisição.') from e
 
     return updated_agent
 
