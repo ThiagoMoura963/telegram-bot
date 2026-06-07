@@ -56,7 +56,7 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
         key='access_token',
         value=token,
         httponly=True,
-        samesite='lax',
+        samesite='none',
         secure=True,
         path='/',
         max_age=SESSION_IN_SECONDS,
